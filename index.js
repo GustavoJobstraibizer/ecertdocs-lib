@@ -8,6 +8,7 @@ window.addEventListener('load', () => {
 
     user: null,
     message: [],
+    file: null,
 
     test() {
       console.log('My Button')
@@ -40,7 +41,10 @@ window.addEventListener('load', () => {
   const btnFile = document.querySelector('#btnTest');
 
   btnFile.addEventListener('click', () => inputFile.click());
-  inputFile.addEventListener('change', () => {});
+  inputFile.addEventListener('change', (e) => {
+    MyPackage.file = e.target.files;
+    console.log(MyPackage.file)
+  });
 
   const myModal = new Modal({
     content: '<canvas id="pdfContent"></canvas>'
