@@ -1,17 +1,18 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Modal from 'modal-vanilla';
-import { User } from './src/entities/User';
+import "bootstrap/dist/css/bootstrap.min.css";
+import Modal from "modal-vanilla";
+import { ControlPage } from "./src/components/ControlPage";
+import { User } from "./src/entities/User";
+import * as helper from "./src/helpers/helper";
 
-window.addEventListener('load', () => {
-
+window.addEventListener("load", () => {
   const MyPackage = {
-
     user: null,
     message: [],
-    file: null,
+    pdf: null,
+    cropper: null,
 
     test() {
-      console.log('My Button')
+      console.log("My Button");
     },
 
     init(name, surname, age) {
@@ -20,41 +21,36 @@ window.addEventListener('load', () => {
     },
 
     createParticipantSignature() {
-      // const modal = document.createElement('div');
-      // modal.id = 'my-modal';
-
-      // document.body.appendChild(modal);
-
-      
       myModal.show();
-      // const modal = new Modal();
-      // modal.showModal();
-      // return new Promise((resolve) => {
-      //   resolve(`file is ${file} and name is ${name}`)
-      // }).then((data) => alert(data))
-    }
-  
-  }
+    },
+  };
   window.MyPackage = MyPackage;
 
-  const inputFile = document.querySelector('#inputFile');
-  const btnFile = document.querySelector('#btnTest');
+  const inputFile = document.querySelector("#inputFile");
+  const btnFile = document.querySelector("#btnTest");
 
-  btnFile.addEventListener('click', () => inputFile.click());
-  inputFile.addEventListener('change', (e) => {
-    MyPackage.file = e.target.files;
-    console.log(MyPackage.file)
+  btnFile.addEventListener("click", () => inputFile.click());
+  inputFile.addEventListener("change", (e) => {
+    MyPackage.pdf = e.target.files;
+    console.log(MyPackage.pdf);
   });
 
   const myModal = new Modal({
-    content: '<canvas id="pdfContent"></canvas>'
+    content: ControlPage(),
   });
 
-  myModal.on('show', () => console.log(MyPackage.message));
-  myModal.on('hidden', () => {
-    MyPackage.message.push(`message_${Math.round(Math.random() * 100)}`)
+  myModal.on("shown", () => {
+    console.log(MyPackage.message);
+
+    const previousBtn = document.querySelector("#previousBtn");
+    previousBtn.addEventListener("click", () => console.log("previous"));
+
+    debugger;
+
+    helper.exibePdf(MyPackage.pdf, document.querySelector("pdfcanvas"));
   });
-  // const myBtnTest = new ButtonComponent().createBtn();
-  
-  // myBtnTest.addEventListener('click', () => MyPackage.createParticipantSignature());
+
+  myModal.on("hidden", () => {
+    MyPackage.message.push(`message_${Math.round(Math.random() * 100)}`);
+  });
 });
