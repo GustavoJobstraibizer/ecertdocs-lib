@@ -1,4 +1,10 @@
-import * as pdfjsLib from "../../pdf";
+// import * as pdfjsLib from "../../static/pdf.js";
+import Cropper from "cropperjs";
+import "cropperjs/dist/cropper.min.css";
+import * as pdfjsLib from "pdfjs-dist";
+import "../../worker";
+// window.pdfjsWorker = require("pdfjs-dist/build/pdf.worker");
+// pdfjsLib.GlobalWorkerOptions.workerSrc = ''
 
 async function exibePdf(pdf, pdfElement) {
   // loading('Carregando Arquivo... Por favor, Aguarde');
@@ -17,10 +23,10 @@ async function exibePdf(pdf, pdfElement) {
   reader.onloadend = async function () {
     var typedArray = new Uint8Array(this.result);
 
-    pdfjsLib.PDFWorker = false;
-
+    // pdfjsLib.PDFWorker = false;
     debugger;
-    const getDocument = await pdfjsLib.getDocument(typedArray);
+
+    const getDocument = await pdfjsLib.getDocument(typedArray).promise;
 
     console.log(getDocument.numPages);
     // MEUS_DOCUMENTOS.totalPages = getDocument.numPages;
@@ -41,8 +47,8 @@ async function exibePdf(pdf, pdfElement) {
 
     var context = pdfElement.getContext("2d");
 
-    WIDTH = viewport.width / 2;
-    HEIGHT = viewport.height / 2;
+    MyPackage.WIDTH = viewport.width / 2;
+    MyPackage.HEIGHT = viewport.height / 2;
 
     pdfElement.width = viewport.width;
     pdfElement.height = viewport.height;
@@ -56,7 +62,7 @@ async function exibePdf(pdf, pdfElement) {
       .then(async () => {
         // MEUS_DOCUMENTOS.totalPage = MEUS_DOCUMENTOS.totalPages;
         // MEUS_DOCUMENTOS.pageCounter();
-        // MEUS_DOCUMENTOS.selectArea();
+        selectArea(pdfElement);
         // if (Object.entries(MEUS_DOCUMENTOS.participant).length > 0 && (MEUS_DOCUMENTOS.participant.isOK && MEUS_DOCUMENTOS.participant.page != MEUS_DOCUMENTOS.pagina)) {
         //   MEUS_DOCUMENTOS.participant.page = MEUS_DOCUMENTOS.participant.page != 'indefinida' ? MEUS_DOCUMENTOS.pagina : MEUS_DOCUMENTOS.participant.page
         //   MEUS_DOCUMENTOS.exibePdf();
@@ -78,6 +84,50 @@ async function exibePdf(pdf, pdfElement) {
   };
 
   reader.readAsArrayBuffer(pdf[0]);
+}
+
+function selectArea(pdfElement) {
+  if (MyPackage.cropper) {
+    MyPackage.cropper.destroy();
+    MyPackage.cropper = null;
+  }
+
+  let textWidth = 0;
+
+  // if (Object.entries(myObject.participant).length > 0) {
+  const dummyElement = document.createElement("canvas");
+  const ctxDummy = dummyElement.getContext("2d");
+  ctxDummy.font = "15px Arial";
+
+  // const name = `${myObject.participant.name.match(/(.*)(?:\@)/)[1]} / ${this.roleParticipant(myObject.participant.role)}`;
+  // const name = `${myObject.participant.name} / ${this.roleParticipant(myObject.participant.role)}`;
+  const name = `Teste`;
+  ctxDummy.fillText(name, 0, 0);
+
+  textWidth = ctxDummy.measureText(name).width;
+
+  dummyElement.remove();
+  // }
+
+  MyPackage.cropper = new Cropper(pdfElement, {
+    //        aspectRatio: 21 / 9,
+    minCanvasWidth: MyPackage.WIDTH,
+    minCanvasHeight: MyPackage.HEIGHT,
+    minContainerWidth: MyPackage.WIDTH * 2,
+    minContainerHeight: MyPackage.HEIGHT * 2,
+    cropBoxResizable: false,
+    dragMode: "move",
+    zoomable: false,
+    background: false,
+    movable: false,
+    minCropBoxWidth: textWidth,
+    //        minCropBoxHeight: textHeight,
+  });
+
+  // setTimeout(() => {
+  //   this.createElementToShowSubscriber();
+  //   this.createElementToShowSubscribers();
+  // }, 1);
 }
 
 export { exibePdf };

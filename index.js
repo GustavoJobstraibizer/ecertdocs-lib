@@ -1,15 +1,19 @@
+// import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Modal from "modal-vanilla";
+import "./main.scss";
 import { ControlPage } from "./src/components/ControlPage";
 import { User } from "./src/entities/User";
 import * as helper from "./src/helpers/helper";
 
-window.addEventListener("load", () => {
+((window) => {
   const MyPackage = {
     user: null,
     message: [],
     pdf: null,
     cropper: null,
+    WIDTH: null,
+    HEIGHT: null,
 
     test() {
       console.log("My Button");
@@ -47,10 +51,10 @@ window.addEventListener("load", () => {
 
     debugger;
 
-    helper.exibePdf(MyPackage.pdf, document.querySelector("pdfcanvas"));
+    helper.exibePdf(MyPackage.pdf, document.querySelector("#pdfCanvas"));
   });
 
   myModal.on("hidden", () => {
     MyPackage.message.push(`message_${Math.round(Math.random() * 100)}`);
   });
-});
+})(window);

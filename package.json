@@ -14,13 +14,14 @@
     "@babel/core": "^7.10.5",
     "@babel/plugin-transform-runtime": "^7.10.5",
     "parcel-bundler": "^1.12.4",
+    "parcel-plugin-static-files-copy": "^2.4.3",
+    "pdfjs-dist": "^2.4.456",
     "sass": "^1.26.10"
   },
   "dependencies": {
     "bootstrap": "^4.5.0",
     "cropperjs": "^1.5.7",
     "modal-vanilla": "^0.8.0",
-    "node-ensure": "0.0.0",
-    "pdfjs": "^2.3.9"
+    "node-ensure": "0.0.0"
   }
 }

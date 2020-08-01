@@ -29,7 +29,7 @@ export const ControlPage = () => {
   </div>
   <div class="col-xs-12 canvas-content">
     <div class="fallback-font-canvas">.</div>
-    <canvas id="pdfcanvas" width="55%" height="55%"></canvas>
+    <canvas id="pdfCanvas" width="55%" height="55%"></canvas>
   </div>
   `;
 };
