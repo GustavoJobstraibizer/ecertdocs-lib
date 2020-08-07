@@ -16,12 +16,15 @@
     "parcel-bundler": "^1.12.4",
     "parcel-plugin-static-files-copy": "^2.4.3",
     "pdfjs-dist": "^2.4.456",
-    "sass": "^1.26.10"
+    "sass": "^1.26.10",
+    "typescript": "^3.9.7"
   },
   "dependencies": {
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.5.2",
     "cropperjs": "^1.5.7",
+    "jquery": "^3.5.1",
     "modal-vanilla": "^0.8.0",
-    "node-ensure": "0.0.0"
+    "node-ensure": "0.0.0",
+    "popper.js": "^1.16.1"
   }
 }

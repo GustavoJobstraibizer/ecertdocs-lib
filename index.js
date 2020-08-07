@@ -1,60 +1,94 @@
 // import "bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
 import Modal from "modal-vanilla";
 import "./main.scss";
 import { ControlPage } from "./src/components/ControlPage";
-import { User } from "./src/entities/User";
+import { DocumentSignatureState } from "./src/entities/document-signature-state";
+import { Shape } from "./src/entities/shape";
 import * as helper from "./src/helpers/helper";
+import { shapeState } from "./src/helpers/shapes";
+import { structureSubscribers } from "./src/helpers/subscribers";
 
 ((window) => {
-  const MyPackage = {
-    user: null,
-    message: [],
-    pdf: null,
-    cropper: null,
-    WIDTH: null,
-    HEIGHT: null,
+  "use strict";
 
-    test() {
-      console.log("My Button");
-    },
+  function myPackage() {
+    let _myLib = {};
 
-    init(name, surname, age) {
-      this.user = new User(name, surname, age);
-      console.log(this.user);
-    },
+    let documentSignatureState = new DocumentSignatureState();
+    let participantsSubscriber = structureSubscribers;
 
-    createParticipantSignature() {
-      myModal.show();
-    },
-  };
-  window.MyPackage = MyPackage;
+    _myLib.createParticipantSignature = (participante) => {
+      const shape = new Shape(
+        "teste@teste.com.br",
+        1,
+        "123.123.123-22",
+        "Teste"
+      );
 
-  const inputFile = document.querySelector("#inputFile");
-  const btnFile = document.querySelector("#btnTest");
+      shapeState.shapes.push(shape);
 
-  btnFile.addEventListener("click", () => inputFile.click());
-  inputFile.addEventListener("change", (e) => {
-    MyPackage.pdf = e.target.files;
-    console.log(MyPackage.pdf);
-  });
+      participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, "Teste");
 
-  const myModal = new Modal({
-    content: ControlPage(),
-  });
+      documentSignatureState.myModal.show();
 
-  myModal.on("shown", () => {
-    console.log(MyPackage.message);
+      documentSignatureState.participant = shapeState.getElementByDataKey(1);
 
-    const previousBtn = document.querySelector("#previousBtn");
-    previousBtn.addEventListener("click", () => console.log("previous"));
+      return new Promise((resolve) => {
+        documentSignatureState.myModal.on("hidden", () => {
+          // TODO Add participant
+          console.log("Add Participant in list ");
+          resolve(participant);
+        });
+      });
+    };
 
-    debugger;
+    _myLib.getParticipants = function () {
+      return null;
+    };
 
-    helper.exibePdf(MyPackage.pdf, document.querySelector("#pdfCanvas"));
-  });
+    function closeModalSignature() {
+      documentSignatureState.myModal.hide();
+    }
 
-  myModal.on("hidden", () => {
-    MyPackage.message.push(`message_${Math.round(Math.random() * 100)}`);
-  });
+    function init() {
+      const inputFile = document.querySelector("#inputFile");
+      const btnFile = document.querySelector("#btnTest");
+
+      btnFile.addEventListener("click", () => inputFile.click());
+      inputFile.addEventListener("change", (e) => {
+        documentSignatureState.pdf = e.target.files;
+        console.log(documentSignatureState.pdf);
+      });
+
+      documentSignatureState.myModal = new Modal({
+        content: ControlPage(),
+      });
+
+      documentSignatureState.myModal.on("shown", () => {
+        const previousBtn = document.querySelector("#previousBtn");
+        previousBtn.addEventListener("click", () => console.log("previous"));
+
+        const btnSelectAreaSignature = document.querySelector(
+          "#btnSelectAreaSignature"
+        );
+        btnSelectAreaSignature.addEventListener("click", () =>
+          closeModalSignature()
+        );
+
+        helper.exibePdf(
+          documentSignatureState.pdf,
+          document.querySelector("#pdfCanvas"),
+          documentSignatureState
+        );
+      });
+    }
+
+    init();
+
+    return _myLib;
+  }
+
+  if (typeof window.EcertDocsLib == "undefined") {
+    window.EcertDocsLib = myPackage();
+  }
 })(window);

@@ -3,10 +3,11 @@ import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.min.css";
 import * as pdfjsLib from "pdfjs-dist";
 import "../../worker";
+import { structureSubscribers } from "./subscribers";
 // window.pdfjsWorker = require("pdfjs-dist/build/pdf.worker");
 // pdfjsLib.GlobalWorkerOptions.workerSrc = ''
 
-async function exibePdf(pdf, pdfElement) {
+async function exibePdf(pdf, pdfElement, documentSignatureState) {
   // loading('Carregando Arquivo... Por favor, Aguarde');
 
   this.nameFile = pdf[0].name;
@@ -35,8 +36,6 @@ async function exibePdf(pdf, pdfElement) {
     //   loading();
     //   return;
     // }
-
-    debugger;
     const page = await getDocument.getPage(1);
 
     const viewport = page.getViewport({ scale: 1 });
@@ -47,8 +46,10 @@ async function exibePdf(pdf, pdfElement) {
 
     var context = pdfElement.getContext("2d");
 
-    MyPackage.WIDTH = viewport.width / 2;
-    MyPackage.HEIGHT = viewport.height / 2;
+    documentSignatureState.width = viewport.width / 2;
+    // MyPackage.WIDTH = viewport.width / 2;
+    documentSignatureState.height = viewport.height / 2;
+    // MyPackage.HEIGHT = viewport.height / 2;
 
     pdfElement.width = viewport.width;
     pdfElement.height = viewport.height;
@@ -62,15 +63,23 @@ async function exibePdf(pdf, pdfElement) {
       .then(async () => {
         // MEUS_DOCUMENTOS.totalPage = MEUS_DOCUMENTOS.totalPages;
         // MEUS_DOCUMENTOS.pageCounter();
-        selectArea(pdfElement);
+        selectArea(pdfElement, documentSignatureState);
         // if (Object.entries(MEUS_DOCUMENTOS.participant).length > 0 && (MEUS_DOCUMENTOS.participant.isOK && MEUS_DOCUMENTOS.participant.page != MEUS_DOCUMENTOS.pagina)) {
         //   MEUS_DOCUMENTOS.participant.page = MEUS_DOCUMENTOS.participant.page != 'indefinida' ? MEUS_DOCUMENTOS.pagina : MEUS_DOCUMENTOS.participant.page
         //   MEUS_DOCUMENTOS.exibePdf();
         // }
-        // if (MEUS_DOCUMENTOS.cropper && MEUS_DOCUMENTOS.participant) {
-        //   MEUS_DOCUMENTOS.cropper.reset();
-        //   MEUS_DOCUMENTOS.cropper.options.data = { x: MEUS_DOCUMENTOS.participant.x, y: MEUS_DOCUMENTOS.participant.y, width: MEUS_DOCUMENTOS.participant.width, height: MEUS_DOCUMENTOS.participant.height };
-        // }
+        if (
+          documentSignatureState.cropper &&
+          documentSignatureState.participant
+        ) {
+          documentSignatureState.cropper.reset();
+          documentSignatureState.cropper.options.data = {
+            x: documentSignatureState.participant.x,
+            y: documentSignatureState.participant.y,
+            width: documentSignatureState.participant.width,
+            height: documentSignatureState.participant.height,
+          };
+        }
         // MEUS_DOCUMENTOS.inputNumPageValue = MEUS_DOCUMENTOS.pagina;
         // if (MEUS_DOCUMENTOS.totalPages == 1) {
         //   MEUS_DOCUMENTOS.controlPage.style.display = 'none';
@@ -86,35 +95,37 @@ async function exibePdf(pdf, pdfElement) {
   reader.readAsArrayBuffer(pdf[0]);
 }
 
-function selectArea(pdfElement) {
-  if (MyPackage.cropper) {
-    MyPackage.cropper.destroy();
-    MyPackage.cropper = null;
+function selectArea(pdfElement, documentSignatureState) {
+  if (documentSignatureState.cropper) {
+    documentSignatureState.cropper.destroy();
+    documentSignatureState.cropper = null;
+    // MyPackage.cropper.destroy();
+    // MyPackage.cropper = null;
   }
 
   let textWidth = 0;
 
-  // if (Object.entries(myObject.participant).length > 0) {
-  const dummyElement = document.createElement("canvas");
-  const ctxDummy = dummyElement.getContext("2d");
-  ctxDummy.font = "15px Arial";
+  if (Object.entries(documentSignatureState.participant).length > 0) {
+    const dummyElement = document.createElement("canvas");
+    const ctxDummy = dummyElement.getContext("2d");
+    ctxDummy.font = "15px Arial";
 
-  // const name = `${myObject.participant.name.match(/(.*)(?:\@)/)[1]} / ${this.roleParticipant(myObject.participant.role)}`;
-  // const name = `${myObject.participant.name} / ${this.roleParticipant(myObject.participant.role)}`;
-  const name = `Teste`;
-  ctxDummy.fillText(name, 0, 0);
+    // const name = `${myObject.participant.name.match(/(.*)(?:\@)/)[1]} / ${this.roleParticipant(myObject.participant.role)}`;
+    // const name = `${myObject.participant.name} / ${this.roleParticipant(myObject.participant.role)}`;
+    const name = `Teste`;
+    ctxDummy.fillText(name, 0, 0);
 
-  textWidth = ctxDummy.measureText(name).width;
+    textWidth = ctxDummy.measureText(name).width;
 
-  dummyElement.remove();
-  // }
+    dummyElement.remove();
+  }
 
-  MyPackage.cropper = new Cropper(pdfElement, {
+  const cropper = new Cropper(pdfElement, {
     //        aspectRatio: 21 / 9,
-    minCanvasWidth: MyPackage.WIDTH,
-    minCanvasHeight: MyPackage.HEIGHT,
-    minContainerWidth: MyPackage.WIDTH * 2,
-    minContainerHeight: MyPackage.HEIGHT * 2,
+    minCanvasWidth: documentSignatureState.width,
+    minCanvasHeight: documentSignatureState.height,
+    minContainerWidth: documentSignatureState.width * 2,
+    minContainerHeight: documentSignatureState.height * 2,
     cropBoxResizable: false,
     dragMode: "move",
     zoomable: false,
@@ -124,10 +135,46 @@ function selectArea(pdfElement) {
     //        minCropBoxHeight: textHeight,
   });
 
-  // setTimeout(() => {
-  //   this.createElementToShowSubscriber();
-  //   this.createElementToShowSubscribers();
-  // }, 1);
+  documentSignatureState.cropper = cropper;
+
+  setTimeout(() => {
+    createElementToShowSubscriber(documentSignatureState);
+    createElementToShowSubscribers();
+  }, 1);
+}
+
+function createElementToShowSubscriber(documentSignatureState) {
+  if (Object.entries(documentSignatureState.participant).length > 0) {
+    let span = document.createElement("span");
+    span.innerHTML = structureSubscribers.getNameSubscriber(
+      documentSignatureState.participant.id
+    );
+    span.classList.add("subscriber");
+
+    const cropperBox = document.querySelector(".cropper-view-box");
+
+    if (cropperBox) {
+      cropperBox.appendChild(span);
+    }
+  }
+}
+
+function createElementToShowSubscribers() {
+  const subscribersOnPage = structureSubscribers.getSubscribersByPage(1);
+
+  if (subscribersOnPage.length > 0) {
+    const cropperCanvas = document.querySelector(".cropper-canvas");
+
+    for (let s of subscribersOnPage) {
+      let text;
+      text = document.createElement("span");
+      text.classList.add("subscribed");
+      text.innerHTML = s.name;
+      text.style.transform = `translate(${s.coordinates.x}px, ${s.coordinates.y}px)`;
+
+      cropperCanvas.appendChild(text);
+    }
+  }
 }
 
 export { exibePdf };

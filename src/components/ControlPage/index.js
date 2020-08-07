@@ -1,5 +1,8 @@
 export const ControlPage = () => {
   return `
+  <div class="content-header-modal-document">
+    <button type="button" class="btn btn-primary" id="btnSelectAreaSignature">Selecionar área</button>
+  </div>
   <div class="text-center" style="margin-bottom: 15px" id="controlPage">
     <div class="btn-group">
       <button type="button" class="btn btn-white" id="previousBtn">
