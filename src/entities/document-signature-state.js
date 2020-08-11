@@ -1,4 +1,4 @@
-class DocumentSignatureState {
+export default class DocumentSignatureState {
   constructor() {
     this.pdf = null;
     this.cropper = null;
@@ -8,5 +8,3 @@ class DocumentSignatureState {
     this.participant = null;
   }
 }
-
-export default DocumentSignatureState;

@@ -3,11 +3,15 @@ import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
 import * as pdfjsLib from 'pdfjs-dist';
 import '../../worker';
-import { structureSubscribers } from './subscribers';
+import structureSubscribers from './subscribers';
 // window.pdfjsWorker = require("pdfjs-dist/build/pdf.worker");
 // pdfjsLib.GlobalWorkerOptions.workerSrc = ''
 
-async function exibePdf(pdf, pdfElement, documentSignatureState) {
+export default async function exibePdf(
+  pdf,
+  pdfElement,
+  documentSignatureState,
+) {
   // loading('Carregando Arquivo... Por favor, Aguarde ');
 
   this.nameFile = pdf[0].name;
@@ -98,7 +102,7 @@ function createElementToShowSubscriber(documentSignatureState) {
   if (Object.entries(documentSignatureState.participant).length > 0) {
     const span = document.createElement('span');
     span.innerHTML = structureSubscribers.getNameSubscriber(
-      documentSignatureState.participant.id
+      documentSignatureState.participant.id,
     );
     span.classList.add('subscriber');
 
@@ -175,5 +179,3 @@ function selectArea(pdfElement, documentSignatureState) {
     createElementToShowSubscribers();
   }, 1);
 }
-
-export default exibePdf;
