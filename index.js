@@ -2,8 +2,8 @@
 import Modal from 'modal-vanilla';
 import './main.scss';
 import { ControlPage } from './src/components/ControlPage';
-import { DocumentSignatureState } from './src/entities/document-signature-state';
-import { Shape } from './src/entities/shape';
+import DocumentSignatureState from './src/entities/document-signature-state';
+import Shape from './src/entities/shape';
 import * as helper from './src/helpers/helper';
 import { shapeState } from './src/helpers/shapes';
 import { structureSubscribers } from './src/helpers/subscribers';

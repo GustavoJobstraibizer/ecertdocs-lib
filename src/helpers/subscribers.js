@@ -1,4 +1,4 @@
-export const structureSubscribers = {
+const structureSubscribers = {
   subscribers: {},
 
   addSubscriber(id, x, y, page, name) {
@@ -11,7 +11,7 @@ export const structureSubscribers = {
 
   getSubscribersByPage(page) {
     return Object.keys(this.subscribers)
-      .filter((c) => this.subscribers[c].page == page)
+      .filter((c) => this.subscribers[c].page === page)
       .map((p) => this.subscribers[p]);
   },
 
@@ -24,6 +24,7 @@ export const structureSubscribers = {
       this.subscribers[s].page = 0;
       this.subscribers[s].x = 0;
       this.subscribers[s].y = 0;
+      return s;
     });
   },
 
@@ -37,3 +38,5 @@ export const structureSubscribers = {
     this.subscribers = {};
   },
 };
+
+export default structureSubscribers;

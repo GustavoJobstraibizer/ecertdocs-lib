@@ -1,4 +1,6 @@
-export const EtipoDocumento = {
-  DIGITAL = 'DIGITAL',
-  ELETRONICA = 'ELETRONICA',
-}
+const EtipoDocumento = {
+  DIGITAL: 'DIGITAL',
+  ELETRONICA: 'ELETRONICA',
+};
+
+export default EtipoDocumento;

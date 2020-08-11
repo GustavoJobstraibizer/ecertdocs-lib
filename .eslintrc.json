@@ -10,6 +10,8 @@
   },
   "rules": {
     "no-debugger": 0,
-    "no-underscore-dangle": "off"
-  }
+    "no-underscore-dangle": "off",
+    "lines-between-class-members": "warn"
+  },
+  "parser": "babel-eslint"
 }

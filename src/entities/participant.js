@@ -1,15 +1,15 @@
-import { SignaturePosition } from "./signature-position";
-import { EtipoDocumento } from "./tipo-documento";
+import SignaturePosition from './signature-position';
+import EtipoDocumento from './tipo-documento';
 
-export class Participant {
-  email = "";
-  document = "";
-  role = EtipoDocumento.DIGITAL;
-  name = "";
-  tipo = "";
-  position = new SignaturePosition();
-
-  constructor(props) {
-    Object.assign(this, props);
+class Participant {
+  constructor() {
+    this.email = '';
+    this.document = '';
+    this.role = EtipoDocumento.DIGITAL;
+    this.name = '';
+    this.tipo = '';
+    this.position = new SignaturePosition();
   }
 }
+
+export default Participant;

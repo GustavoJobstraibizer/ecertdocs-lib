@@ -1,7 +1,11 @@
-export class SignaturePosition {
-  posX = 0;
-  posY = 0;
-  height = 0;
-  page = 0;
-  width = 0;
+class SignaturePosition {
+  constructor() {
+    this.posX = 0;
+    this.posY = 0;
+    this.height = 0;
+    this.page = 0;
+    this.width = 0;
+  }
 }
+
+export default SignaturePosition;
