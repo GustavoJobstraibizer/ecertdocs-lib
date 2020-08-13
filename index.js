@@ -1,18 +1,18 @@
 // import "bootstrap";
 import Modal from 'modal-vanilla';
 import './main.scss';
-import { ControlPage } from './src/components/ControlPage';
+import ControlPage from './src/components/ControlPage';
 import DocumentSignatureState from './src/entities/document-signature-state';
 import Shape from './src/entities/shape';
-import exibePdf from './src/helpers/helper';
+import { exibePdf, selectArea } from './src/helpers/helper';
 import shapeState from './src/helpers/shapes';
 import structureSubscribers from './src/helpers/subscribers';
 
 ((window) => {
   function myPackage() {
-    const ecerDocstLib = {};
+    const ecertDocstLib = {};
 
-    const documentSignatureState = new DocumentSignatureState();
+    const docSignState = DocumentSignatureState;
     const participantsSubscriber = structureSubscribers;
 
     const isRequired = (field, value) => {
@@ -20,30 +20,28 @@ import structureSubscribers from './src/helpers/subscribers';
       throw new Error(`O Campo "${field}" é obrigatório`);
     };
 
-    ecerDocstLib.createParticipantSignature = (participant = {}) => {
-      const participanData = participant;
+    ecertDocstLib.createParticipantSignature = (participant = {}) => {
+      const data = participant;
       const shape = new Shape(
-        (participanData.email = isRequired('email', participanData.email)),
-        (participanData.order = isRequired('order', participanData.order)),
-        (participanData.document = isRequired(
-          'document',
-          participanData.document,
-        )),
-        (participanData.name = isRequired('name', participanData.name)),
+        (data.email = isRequired('email', data.email)),
+        (data.order = isRequired('order', data.order)),
+        (data.document = isRequired('document', data.document)),
+        (data.name = isRequired('name', data.name)),
+        (data.role = isRequired('role', data.role)),
       );
+
+      shapeState.emailAlreadyExists(data.email);
 
       shapeState.shapes.push(shape);
 
       participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, participant.name);
 
-      documentSignatureState.myModal.show();
+      docSignState.myModal.show();
 
-      documentSignatureState.participant = shapeState.getElementByDataKey(
-        shape.dataKey,
-      );
+      docSignState.participant = shapeState.getElementByDataKey(shape.dataKey);
 
       return new Promise((resolve) => {
-        documentSignatureState.myModal.on('hidden', () => {
+        docSignState.myModal.on('hidden', () => {
           // TODO Add participant
           console.log('Add Participant in list ');
           resolve(participant);
@@ -51,17 +49,17 @@ import structureSubscribers from './src/helpers/subscribers';
       });
     };
 
-    ecerDocstLib.updateParticipantSignature = (
+    ecertDocstLib.updateParticipantSignature = (
       document = isRequired('document', document),
     ) => {
       const shape = shapeState.getParticipantByDocument(document);
 
-      documentSignatureState.participant = shape;
+      docSignState.participant = shape;
 
-      documentSignatureState.myModal.show();
+      docSignState.myModal.show();
     };
 
-    ecerDocstLib.removeParticipant = (
+    ecertDocstLib.removeParticipant = (
       document = isRequired('document', document),
     ) => {
       const shape = shapeState.getParticipantByDocument(document);
@@ -94,24 +92,21 @@ import structureSubscribers from './src/helpers/subscribers';
       }, 300);
     };
 
-    ecerDocstLib.getParticipants = () => shapeState.shapes;
+    ecertDocstLib.getParticipants = () => shapeState.shapes;
 
     function closeModalSignature() {
-      debugger;
-      documentSignatureState.myModal.hide();
+      docSignState.myModal.hide();
 
-      // this.modalDocument.modal("hide");
-
-      if (documentSignatureState.cropper != null) {
-        const dataCropper = documentSignatureState.cropper.getData();
+      if (docSignState.cropper != null) {
+        const dataCropper = docSignState.cropper.getData();
 
         shapeState.shapes.forEach((shape) => {
-          if (documentSignatureState.participant.text === shape.text) {
+          if (docSignState.participant.text === shape.text) {
             shape.x = dataCropper.x;
             shape.y = dataCropper.y;
             shape.width = dataCropper.width;
             shape.height = dataCropper.height;
-            shape.page = documentSignatureState.pagina;
+            shape.page = docSignState.pagina;
             shape.isOK = true;
 
             structureSubscribers.changeCoordinates(
@@ -128,37 +123,71 @@ import structureSubscribers from './src/helpers/subscribers';
         });
       }
 
-      documentSignatureState.participant = {};
+      docSignState.participant = {};
     }
 
     /* eslint operator-linebreak: ["error", "after"] */
     function setCropperDataOnModalOpened() {
       if (
-        documentSignatureState.cropper &&
-        documentSignatureState.cropper.cropBoxData &&
-        documentSignatureState.participant
+        docSignState.cropper &&
+        docSignState.cropper.cropBoxData &&
+        docSignState.participant
       ) {
-        documentSignatureState.pagina =
-          documentSignatureState.participant.page === 'indefinida'
+        docSignState.pagina =
+          docSignState.participant.page === 'indefinida'
             ? 1
-            : documentSignatureState.participant.page;
+            : docSignState.participant.page;
 
-        documentSignatureState.cropper.reset();
-        documentSignatureState.cropper.cropBoxData.width =
-          documentSignatureState.participant.width;
-        documentSignatureState.cropper.cropBoxData.height =
-          documentSignatureState.participant.height;
-        documentSignatureState.cropper.cropBoxData.left =
-          documentSignatureState.participant.x;
-        documentSignatureState.cropper.cropBoxData.top =
-          documentSignatureState.participant.y;
-        documentSignatureState.cropper.setCropBoxData(
-          documentSignatureState.cropper.cropBoxData,
-        );
+        docSignState.cropper.reset();
+        docSignState.cropper.cropBoxData.width = docSignState.participant.width;
+        docSignState.cropper.cropBoxData.height =
+          docSignState.participant.height;
+        docSignState.cropper.cropBoxData.left = docSignState.participant.x;
+        docSignState.cropper.cropBoxData.top = docSignState.participant.y;
+        docSignState.cropper.setCropBoxData(docSignState.cropper.cropBoxData);
 
-        documentSignatureState.inputNumPageValue =
-          documentSignatureState.pagina;
+        docSignState.inputNumPageValue = docSignState.pagina;
       }
+    }
+
+    function pageCounter() {
+      const pageCount = document.querySelector('.page-count');
+      pageCount.innerHTML = `/ ${docSignState.totalPages}`;
+    }
+
+    async function successResolverPDF() {
+      // docSignState.totalPage = docSignState.totalPages;
+      docSignState.pageCounter();
+
+      selectArea(document.querySelector('#pdfCanvas'), docSignState);
+
+      if (
+        Object.entries(docSignState.participant).length > 0 &&
+        docSignState.participant.isOK &&
+        docSignState.participant.page != docSignState.pagina
+      ) {
+        docSignState.participant.page =
+          docSignState.participant.page != 'indefinida'
+            ? docSignState.pagina
+            : docSignState.participant.page;
+        exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+      }
+
+      if (docSignState.cropper && docSignState.participant) {
+        docSignState.cropper.reset();
+        docSignState.cropper.options.data = {
+          x: docSignState.participant.x,
+          y: docSignState.participant.y,
+          width: docSignState.participant.width,
+          height: docSignState.participant.height,
+        };
+      }
+      // docSignState.inputNumPageValue = docSignState.pagina;
+      // if (docSignState.totalPages == 1) {
+      //   docSignState.controlPage.style.display = 'none';
+      // } else {
+      //   docSignState.controlPage.style.display = 'block';
+      // }
     }
 
     function _init() {
@@ -167,38 +196,73 @@ import structureSubscribers from './src/helpers/subscribers';
 
       btnFile.addEventListener('click', () => inputFile.click());
       inputFile.addEventListener('change', (e) => {
-        documentSignatureState.pdf = e.target.files;
-        console.log(documentSignatureState.pdf);
+        docSignState.pdf = e.target.files;
+        console.log(docSignState.pdf);
       });
 
-      documentSignatureState.myModal = new Modal({
+      docSignState.myModal = new Modal({
         content: ControlPage(),
       });
 
-      documentSignatureState.myModal.on('shown', () => {
+      docSignState.myModal.on('shown', () => {
+        function proximo() {
+          if (docSignState.pagina < docSignState.totalPages) {
+            docSignState.pagina += 1;
+          }
+
+          docSignState.inputNumPageValue = docSignState.pagina;
+
+          // MEUS_DOCUMENTOS.cropper.reset();
+          if (docSignState.cropper != null) {
+            docSignState.cropper.destroy();
+          }
+
+          pageCounter();
+
+          exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+        }
+
+        function anterior() {
+          if (docSignState.pagina > 1) {
+            docSignState.pagina -= 1;
+          }
+
+          docSignState.inputNumPageValue = docSignState.pagina;
+
+          if (docSignState.cropper != null) {
+            docSignState.cropper.destroy();
+          }
+
+          exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+
+          pageCounter();
+        }
+
         const previousBtn = document.querySelector('#previousBtn');
-        previousBtn.addEventListener('click', () => console.log('previous'));
+        previousBtn.addEventListener('click', anterior);
+
+        const nextBtn = document.querySelector('#nextBtn');
+        nextBtn.addEventListener('click', proximo);
 
         const btnSelectAreaSignature = document.querySelector(
           '#btnSelectAreaSignature',
         );
+
         btnSelectAreaSignature.addEventListener('click', () =>
           closeModalSignature(),
         );
 
         setCropperDataOnModalOpened();
 
-        exibePdf(
-          documentSignatureState.pdf,
-          document.querySelector('#pdfCanvas'),
-          documentSignatureState,
+        exibePdf(docSignState, document.querySelector('#pdfCanvas')).then(
+          successResolverPDF,
         );
       });
     }
 
     _init();
 
-    return ecerDocstLib;
+    return ecertDocstLib;
   }
 
   if (typeof window.EcertDocsLib === 'undefined') {

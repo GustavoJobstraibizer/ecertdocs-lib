@@ -1,10 +1,13 @@
-export default class DocumentSignatureState {
-  constructor() {
-    this.pdf = null;
-    this.cropper = null;
-    this.width = 0;
-    this.height = 0;
-    this.myModal = null;
-    this.participant = null;
-  }
-}
+const DocumentSignatureState = {
+  pdf: null,
+  cropper: null,
+  width: 0,
+  height: 0,
+  myModal: null,
+  participant: null,
+  role: null,
+  totalPages: 0,
+  pagina: 1,
+};
+
+export default DocumentSignatureState;

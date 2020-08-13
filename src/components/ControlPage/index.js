@@ -1,6 +1,5 @@
-export const ControlPage = () => {
-  return `
-  <div class="content-header-modal-document">
+const ControlPage = () =>
+  `<div class="content-header-modal-document">
     <button type="button" class="btn btn-primary" id="btnSelectAreaSignature">Selecionar área</button>
   </div>
   <div class="text-center" style="margin-bottom: 15px" id="controlPage">
@@ -34,5 +33,6 @@ export const ControlPage = () => {
     <div class="fallback-font-canvas">.</div>
     <canvas id="pdfCanvas" width="55%" height="55%"></canvas>
   </div>
-  `;
-};
+`;
+
+export default ControlPage;

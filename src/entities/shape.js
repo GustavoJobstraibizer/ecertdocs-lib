@@ -18,12 +18,13 @@ class Shape {
   dataKey = this.order;
   id = this._generateId();
 
-  constructor(email, order, document, name) {
+  constructor(email, order, document, name, role) {
     this.text = email;
     this.order = order;
     this.document = document;
     this.name = name;
     this.dataKey = order;
+    this.role = role;
   }
 
   _generateId() {

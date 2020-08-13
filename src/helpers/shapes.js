@@ -18,6 +18,16 @@ const shapeState = {
   removeParticipantFromShapes(document) {
     return this.shapes.filter((sh) => sh.document !== document);
   },
+
+  emailAlreadyExists(email) {
+    const emailExists = this.shapes.some(
+      (shape) => shape.text.trim() === email.trim(),
+    );
+
+    if (emailExists) {
+      throw new Error('E-mail ja informado');
+    }
+  },
 };
 
 export default shapeState;
