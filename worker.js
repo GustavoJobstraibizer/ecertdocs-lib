@@ -1,4 +1,4 @@
-(typeof window !== "undefined"
+(typeof window !== 'undefined'
   ? window
   : {}
-).pdfjsWorker = require("pdfjs-dist/build/pdf.worker");
+).pdfjsWorker = require('pdfjs-dist/build/pdf.worker');

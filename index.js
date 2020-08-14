@@ -20,6 +20,9 @@ import structureSubscribers from './src/helpers/subscribers';
       throw new Error(`O Campo "${field}" é obrigatório`);
     };
 
+    const capitalizeFirstLetter = (text) =>
+      `${text.charAt(0).toUpperCase()}${text.toLowerCase().slice(1)}`;
+
     ecertDocstLib.createParticipantSignature = (participant = {}) => {
       const data = participant;
       const shape = new Shape(
@@ -34,7 +37,9 @@ import structureSubscribers from './src/helpers/subscribers';
 
       shapeState.shapes.push(shape);
 
-      participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, participant.name);
+      const name = `${data.name} / ${capitalizeFirstLetter(data.role)}`;
+
+      participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, name);
 
       docSignState.myModal.show();
 
@@ -155,9 +160,13 @@ import structureSubscribers from './src/helpers/subscribers';
       pageCount.innerHTML = `/ ${docSignState.totalPages}`;
     }
 
+    function setNumPageValue(value) {
+      document.querySelector('#numPage').value = value;
+    }
+
     async function successResolverPDF() {
       // docSignState.totalPage = docSignState.totalPages;
-      docSignState.pageCounter();
+      pageCounter();
 
       selectArea(document.querySelector('#pdfCanvas'), docSignState);
 
@@ -170,7 +179,13 @@ import structureSubscribers from './src/helpers/subscribers';
           docSignState.participant.page != 'indefinida'
             ? docSignState.pagina
             : docSignState.participant.page;
-        exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+
+        try {
+          await exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+          // successResolverPDF();
+        } catch (e) {
+          // console.error(e);
+        }
       }
 
       if (docSignState.cropper && docSignState.participant) {
@@ -182,12 +197,14 @@ import structureSubscribers from './src/helpers/subscribers';
           height: docSignState.participant.height,
         };
       }
-      // docSignState.inputNumPageValue = docSignState.pagina;
-      // if (docSignState.totalPages == 1) {
-      //   docSignState.controlPage.style.display = 'none';
-      // } else {
-      //   docSignState.controlPage.style.display = 'block';
-      // }
+
+      setNumPageValue(docSignState.pagina);
+      const controlPage = document.querySelector('#controlPage');
+      if (docSignState.totalPages === 1) {
+        controlPage.style.display = 'none';
+      } else {
+        controlPage.style.display = 'block';
+      }
     }
 
     function _init() {
@@ -210,7 +227,7 @@ import structureSubscribers from './src/helpers/subscribers';
             docSignState.pagina += 1;
           }
 
-          docSignState.inputNumPageValue = docSignState.pagina;
+          setNumPageValue(docSignState.pagina);
 
           // MEUS_DOCUMENTOS.cropper.reset();
           if (docSignState.cropper != null) {
@@ -219,7 +236,12 @@ import structureSubscribers from './src/helpers/subscribers';
 
           pageCounter();
 
-          exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+          try {
+            exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+            // successResolverPDF();
+          } catch (e) {
+            // console.error(e);
+          }
         }
 
         function anterior() {
@@ -227,15 +249,20 @@ import structureSubscribers from './src/helpers/subscribers';
             docSignState.pagina -= 1;
           }
 
-          docSignState.inputNumPageValue = docSignState.pagina;
+          setNumPageValue(docSignState.pagina);
 
           if (docSignState.cropper != null) {
             docSignState.cropper.destroy();
           }
 
-          exibePdf(docSignState, document.querySelector('#pdfCanvas'));
-
-          pageCounter();
+          try {
+            exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+            // successResolverPDF();
+          } catch (e) {
+            // console.error(e);
+          } finally {
+            pageCounter();
+          }
         }
 
         const previousBtn = document.querySelector('#previousBtn');
@@ -254,9 +281,7 @@ import structureSubscribers from './src/helpers/subscribers';
 
         setCropperDataOnModalOpened();
 
-        exibePdf(docSignState, document.querySelector('#pdfCanvas')).then(
-          successResolverPDF,
-        );
+        exibePdf(docSignState, document.querySelector('#pdfCanvas'));
       });
     }
 
