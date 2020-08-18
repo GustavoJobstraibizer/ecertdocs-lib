@@ -3,10 +3,11 @@ import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
 import * as pdfjsLib from 'pdfjs-dist';
 import '../../worker';
+import docSignState from '../entities/document-signature-state';
 import roleParticipant from './roles';
 import structureSubscribers from './subscribers';
 
-function createElementToShowSubscriber(docSignState) {
+function createElementToShowSubscriber() {
   if (Object.entries(docSignState.participant).length > 0) {
     const span = document.createElement('span');
     span.innerHTML = structureSubscribers.getNameSubscriber(
@@ -22,7 +23,7 @@ function createElementToShowSubscriber(docSignState) {
   }
 }
 
-function createElementToShowSubscribers(docSignState) {
+function createElementToShowSubscribers() {
   const subscribersOnPage = structureSubscribers.getSubscribersByPage(
     docSignState.pagina,
   );
@@ -48,12 +49,12 @@ function setNumPageValue(value) {
   document.querySelector('#numPage').value = value;
 }
 
-function pageCounter(docSignState) {
+function pageCounter() {
   const pageCount = document.querySelector('.page-count');
   pageCount.innerHTML = `/ ${docSignState.totalPages}`;
 }
 
-function selectArea(pdfElement, docSignState) {
+function selectArea(pdfElement) {
   if (docSignState.cropper) {
     docSignState.cropper.destroy();
     docSignState.cropper = null;
@@ -97,7 +98,7 @@ function selectArea(pdfElement, docSignState) {
   }, 1);
 }
 
-async function successResolverPDF(docSignState) {
+async function successResolverPDF() {
   // docSignState.totalPage = docSignState.totalPages;
   pageCounter(docSignState);
 
@@ -114,7 +115,7 @@ async function successResolverPDF(docSignState) {
         : docSignState.participant.page;
 
     try {
-      exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+      exibePdf(document.querySelector('#pdfCanvas'));
       // successResolverPDF();
     } catch (e) {
       // console.error(e);
@@ -140,7 +141,7 @@ async function successResolverPDF(docSignState) {
   }
 }
 
-async function exibePdf(docSignState, pdfElement) {
+async function exibePdf(pdfElement) {
   // const promisePDF = new Promise((resolve, reject) => {
   this.nameFile = docSignState.pdf[0].name;
   this.fileSize = docSignState.pdf[0].size;

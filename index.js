@@ -2,9 +2,10 @@
 import Modal from 'modal-vanilla';
 import './main.scss';
 import ControlPage from './src/components/ControlPage';
-import DocumentSignatureState from './src/entities/document-signature-state';
+import docSignState from './src/entities/document-signature-state';
 import Shape from './src/entities/shape';
-import { exibePdf, selectArea } from './src/helpers/helper';
+import { exibePdf } from './src/helpers/helper';
+import { capitalizeFirstLetter, isRequired } from './src/helpers/helpers';
 import shapeState from './src/helpers/shapes';
 import structureSubscribers from './src/helpers/subscribers';
 
@@ -12,16 +13,7 @@ import structureSubscribers from './src/helpers/subscribers';
   function myPackage() {
     const ecertDocstLib = {};
 
-    const docSignState = DocumentSignatureState;
     const participantsSubscriber = structureSubscribers;
-
-    const isRequired = (field, value) => {
-      if (value) return value;
-      throw new Error(`O Campo "${field}" é obrigatório`);
-    };
-
-    const capitalizeFirstLetter = (text) =>
-      `${text.charAt(0).toUpperCase()}${text.toLowerCase().slice(1)}`;
 
     ecertDocstLib.createParticipantSignature = (participant = {}) => {
       const data = participant;
@@ -164,49 +156,6 @@ import structureSubscribers from './src/helpers/subscribers';
       document.querySelector('#numPage').value = value;
     }
 
-    async function successResolverPDF() {
-      // docSignState.totalPage = docSignState.totalPages;
-      pageCounter();
-
-      selectArea(document.querySelector('#pdfCanvas'), docSignState);
-
-      if (
-        Object.entries(docSignState.participant).length > 0 &&
-        docSignState.participant.isOK &&
-        docSignState.participant.page != docSignState.pagina
-      ) {
-        docSignState.participant.page =
-          docSignState.participant.page != 'indefinida'
-            ? docSignState.pagina
-            : docSignState.participant.page;
-
-        try {
-          await exibePdf(docSignState, document.querySelector('#pdfCanvas'));
-          // successResolverPDF();
-        } catch (e) {
-          // console.error(e);
-        }
-      }
-
-      if (docSignState.cropper && docSignState.participant) {
-        docSignState.cropper.reset();
-        docSignState.cropper.options.data = {
-          x: docSignState.participant.x,
-          y: docSignState.participant.y,
-          width: docSignState.participant.width,
-          height: docSignState.participant.height,
-        };
-      }
-
-      setNumPageValue(docSignState.pagina);
-      const controlPage = document.querySelector('#controlPage');
-      if (docSignState.totalPages === 1) {
-        controlPage.style.display = 'none';
-      } else {
-        controlPage.style.display = 'block';
-      }
-    }
-
     function _init() {
       const inputFile = document.querySelector('#inputFile');
       const btnFile = document.querySelector('#btnTest');
@@ -237,7 +186,7 @@ import structureSubscribers from './src/helpers/subscribers';
           pageCounter();
 
           try {
-            exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+            exibePdf(document.querySelector('#pdfCanvas'));
             // successResolverPDF();
           } catch (e) {
             // console.error(e);
@@ -256,7 +205,7 @@ import structureSubscribers from './src/helpers/subscribers';
           }
 
           try {
-            exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+            exibePdf(document.querySelector('#pdfCanvas'));
             // successResolverPDF();
           } catch (e) {
             // console.error(e);
@@ -281,7 +230,7 @@ import structureSubscribers from './src/helpers/subscribers';
 
         setCropperDataOnModalOpened();
 
-        exibePdf(docSignState, document.querySelector('#pdfCanvas'));
+        exibePdf(document.querySelector('#pdfCanvas'));
       });
     }
 
