@@ -11,7 +11,8 @@
   "rules": {
     "no-debugger": 0,
     "no-underscore-dangle": "off",
-    "lines-between-class-members": "warn"
+    "lines-between-class-members": "off",
+    "arrow-body-style": "off"
   },
   "parser": "babel-eslint"
 }

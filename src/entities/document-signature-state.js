@@ -1,21 +1,21 @@
-const DocumentSignatureState = {
-  pdf: null,
-  cropper: null,
-  width: 0,
-  height: 0,
-  myModal: null,
-  participant: null,
-  role: null,
-  totalPages: 0,
-  pagina: 1,
+class DocumentSignatureState {
+  constructor() {
+    this.reset();
+  }
 
-  setPage(page) {
-    this.pagina = page;
-  },
+  reset() {
+    this.pdf = null;
+    this.cropper = null;
+    this.width = 0;
+    this.height = 0;
+    this.myModal = null;
+    this.participant = null;
+    this.role = null;
+    this.totalPages = 0;
+    this.pagina = 1;
+  }
+}
 
-  setTotalPages(total) {
-    this.totalPages = total;
-  },
-};
+const documentSignatureState = new DocumentSignatureState();
 
-export default DocumentSignatureState;
+export default documentSignatureState;

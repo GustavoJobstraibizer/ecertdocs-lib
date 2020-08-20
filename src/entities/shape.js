@@ -1,4 +1,5 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["_generateId"] }] */
+import shapeState from '../helpers/shapes';
 
 class Shape {
   x = 0;
@@ -18,13 +19,21 @@ class Shape {
   dataKey = this.order;
   id = this._generateId();
 
-  constructor(email, order, document, name, role) {
+  constructor(email, document, name, role, tipoAssinatura = 1) {
+    const order = shapeState.length
+      ? Math.max(
+          ...Math,
+          shapeState.map((shape) => shape.order + 1),
+        )
+      : 1;
+
     this.text = email;
     this.order = order;
     this.document = document;
     this.name = name;
     this.dataKey = order;
     this.role = role;
+    this.tipo = tipoAssinatura === 1 ? 'ELETRONICA' : 'DIGITAL';
   }
 
   _generateId() {

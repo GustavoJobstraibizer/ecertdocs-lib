@@ -142,9 +142,8 @@ async function successResolverPDF() {
 }
 
 async function exibePdf(pdfElement) {
-  // const promisePDF = new Promise((resolve, reject) => {
-  this.nameFile = docSignState.pdf[0].name;
-  this.fileSize = docSignState.pdf[0].size;
+  this.nameFile = docSignState.pdf.name;
+  this.fileSize = docSignState.pdf.size;
 
   // if (this.validateFileSize(pdf[0].size)) {
   //   fileInput.val('');
@@ -187,15 +186,11 @@ async function exibePdf(pdfElement) {
         successResolverPDF(docSignState);
       })
       .catch((e) => {
-        // console.error(e);
+        console.error(e);
       });
-    // .finally(() => resolve(true));
   };
 
-  reader.readAsArrayBuffer(docSignState.pdf[0]);
-  // });
-
-  // return Promise.all([promisePDF]);
+  reader.readAsArrayBuffer(docSignState.pdf);
 }
 
 export { exibePdf, selectArea };

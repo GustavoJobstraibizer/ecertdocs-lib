@@ -4,8 +4,13 @@ import './main.scss';
 import ControlPage from './src/components/ControlPage';
 import docSignState from './src/entities/document-signature-state';
 import Shape from './src/entities/shape';
+import EcertDocsError from './src/errors/ecert-lib';
 import { exibePdf } from './src/helpers/helper';
-import { capitalizeFirstLetter, isRequired } from './src/helpers/helpers';
+import {
+  capitalizeFirstLetter,
+  isRequired,
+  isValidEmail,
+} from './src/helpers/helpers';
 import shapeState from './src/helpers/shapes';
 import structureSubscribers from './src/helpers/subscribers';
 
@@ -15,17 +20,49 @@ import structureSubscribers from './src/helpers/subscribers';
 
     const participantsSubscriber = structureSubscribers;
 
+    function validateInputFile(pdf) {
+      if (pdf instanceof File) {
+        return pdf;
+      }
+
+      throw new EcertDocsError({
+        message: 'Erro ao setar o documento PDF para a assinatura.',
+        type: 'validation_error',
+        errors: [
+          {
+            message: 'Você deve informar um arquivo com o formato pdf.',
+          },
+        ],
+      });
+    }
+
+    function throwApplicationError({ message, type, errors }) {
+      throw new EcertDocsError({ message, type, errors });
+    }
+
+    ecertDocstLib.addPDFDocument = (pdfFile) => {
+      return Promise.resolve(validateInputFile(pdfFile))
+        .then((file) => {
+          docSignState.pdf = file;
+        })
+        .then(() => Promise.resolve(true))
+        .catch(throwApplicationError);
+    };
+
     ecertDocstLib.createParticipantSignature = (participant = {}) => {
       const data = participant;
       const shape = new Shape(
         (data.email = isRequired('email', data.email)),
-        (data.order = isRequired('order', data.order)),
         (data.document = isRequired('document', data.document)),
         (data.name = isRequired('name', data.name)),
         (data.role = isRequired('role', data.role)),
+        data.tipoAssinatura,
       );
 
       shapeState.emailAlreadyExists(data.email);
+      if (!isValidEmail(data.email)) {
+        throw new Error('O email informado não é válido');
+      }
 
       shapeState.shapes.push(shape);
 
@@ -37,16 +74,16 @@ import structureSubscribers from './src/helpers/subscribers';
 
       docSignState.participant = shapeState.getElementByDataKey(shape.dataKey);
 
-      return new Promise((resolve) => {
-        docSignState.myModal.on('hidden', () => {
-          // TODO Add participant
-          console.log('Add Participant in list ');
-          resolve(participant);
-        });
-      });
+      // return new Promise((resolve) => {
+      //   docSignState.myModal.on('hidden', () => {
+      //     // TODO Add participant
+      //     console.log('Add Participant in list ');
+      //     resolve(participant);
+      //   });
+      // });
     };
 
-    ecertDocstLib.updateParticipantSignature = (
+    ecertDocstLib.updateParticipantSignaturePos = (
       document = isRequired('document', document),
     ) => {
       const shape = shapeState.getParticipantByDocument(document);
@@ -56,7 +93,7 @@ import structureSubscribers from './src/helpers/subscribers';
       docSignState.myModal.show();
     };
 
-    ecertDocstLib.removeParticipant = (
+    ecertDocstLib.removeParticipantSignature = (
       document = isRequired('document', document),
     ) => {
       const shape = shapeState.getParticipantByDocument(document);
@@ -87,6 +124,17 @@ import structureSubscribers from './src/helpers/subscribers';
           order += 1;
         }
       }, 300);
+    };
+
+    function eraseData() {
+      docSignState.reset();
+      shapeState.shapes = [];
+      structureSubscribers.subscribers = {};
+      return true;
+    }
+
+    ecertDocstLib.resetData = () => {
+      return Promise.resolve(eraseData()).then(() => Promise.resolve(true));
     };
 
     ecertDocstLib.getParticipants = () => shapeState.shapes;
@@ -161,9 +209,12 @@ import structureSubscribers from './src/helpers/subscribers';
       const btnFile = document.querySelector('#btnTest');
 
       btnFile.addEventListener('click', () => inputFile.click());
+      inputFile.addEventListener('click', (e) => {
+        e.target.value = '';
+      });
       inputFile.addEventListener('change', (e) => {
-        docSignState.pdf = e.target.files;
-        console.log(docSignState.pdf);
+        const [files] = e.target.files;
+        docSignState.pdf = files;
       });
 
       docSignState.myModal = new Modal({
@@ -187,9 +238,8 @@ import structureSubscribers from './src/helpers/subscribers';
 
           try {
             exibePdf(document.querySelector('#pdfCanvas'));
-            // successResolverPDF();
           } catch (e) {
-            // console.error(e);
+            console.error(e);
           }
         }
 
@@ -206,9 +256,8 @@ import structureSubscribers from './src/helpers/subscribers';
 
           try {
             exibePdf(document.querySelector('#pdfCanvas'));
-            // successResolverPDF();
           } catch (e) {
-            // console.error(e);
+            console.error(e);
           } finally {
             pageCounter();
           }
@@ -239,6 +288,7 @@ import structureSubscribers from './src/helpers/subscribers';
     return ecertDocstLib;
   }
 
+  /* eslint-disable no-param-reassign */
   if (typeof window.EcertDocsLib === 'undefined') {
     window.EcertDocsLib = myPackage();
   }

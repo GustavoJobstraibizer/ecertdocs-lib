@@ -1,3 +1,8 @@
+@font-face {
+  font-family: Countryside-Personal-Use;
+  src: url('/src/fonts/Countryside Personal Use.ttf');
+}
+
 $colors: (
   'primary': #007bff,
   'primary-dark': #0062cc,
@@ -269,4 +274,37 @@ button.close {
   .modal-dialog {
     width: 900px;
   }
+}
+
+// Subscriber signature
+.subscriber {
+  position: absolute;
+  font-size: 15px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  color: #000;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  height: auto;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-family: Countryside-Personal-Use;
+}
+
+.subscribed {
+  position: absolute;
+  font-size: 15px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  color: #000;
+  font-family: Countryside-Personal-Use;
 }
