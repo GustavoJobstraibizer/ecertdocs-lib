@@ -54,7 +54,8 @@ function pageCounter() {
   pageCount.innerHTML = `/ ${docSignState.totalPages}`;
 }
 
-function selectArea(pdfElement) {
+function selectArea() {
+  const pdfCanvas = document.querySelector('#pdfCanvas');
   if (docSignState.cropper) {
     docSignState.cropper.destroy();
     docSignState.cropper = null;
@@ -76,8 +77,10 @@ function selectArea(pdfElement) {
 
     dummyElement.remove();
   }
+  // const context = pdfCanvas.getContext('2d');
+  // context.clearRect(0, 0, 0, 0);
 
-  const cropper = new Cropper(pdfElement, {
+  const cropper = new Cropper(pdfCanvas, {
     minCanvasWidth: docSignState.width,
     minCanvasHeight: docSignState.height,
     minContainerWidth: docSignState.width * 2,
@@ -88,6 +91,7 @@ function selectArea(pdfElement) {
     background: false,
     movable: false,
     minCropBoxWidth: textWidth,
+    rotatable: false,
   });
 
   docSignState.cropper = cropper;
@@ -102,7 +106,7 @@ async function successResolverPDF() {
   // docSignState.totalPage = docSignState.totalPages;
   pageCounter(docSignState);
 
-  selectArea(document.querySelector('#pdfCanvas'), docSignState);
+  selectArea();
 
   if (
     Object.entries(docSignState.participant).length > 0 &&
@@ -115,8 +119,7 @@ async function successResolverPDF() {
         : docSignState.participant.page;
 
     try {
-      exibePdf(document.querySelector('#pdfCanvas'));
-      // successResolverPDF();
+      exibePdf();
     } catch (e) {
       // console.error(e);
     }
@@ -141,15 +144,13 @@ async function successResolverPDF() {
   }
 }
 
-async function exibePdf(pdfElement) {
+async function exibePdf() {
+  const pdfCanvas = document.querySelector('#pdfCanvas');
+  const context = pdfCanvas.getContext('2d');
+  // context.clearRect(0, 0, 0, 0);
   this.nameFile = docSignState.pdf.name;
   this.fileSize = docSignState.pdf.size;
 
-  // if (this.validateFileSize(pdf[0].size)) {
-  //   fileInput.val('');
-  //   toastr.warn('Selecione um arquivo com o tamanho máximo de 15MB');
-  //   return;
-  // }
   const reader = new FileReader();
 
   reader.onloadend = async function () {
@@ -160,21 +161,15 @@ async function exibePdf(pdfElement) {
 
     docSignState.totalPages = getDocument.numPages;
 
-    // if (!MEUS_DOCUMENTOS._validateTotalPageInDocument()) {
-    //   loading();
-    //   return;
-    // }
     const page = await getDocument.getPage(docSignState.pagina);
 
     const viewport = page.getViewport({ scale: 1 });
 
-    const context = pdfElement.getContext('2d');
-
     docSignState.width = viewport.width / 2;
     docSignState.height = viewport.height / 2;
 
-    pdfElement.width = viewport.width;
-    pdfElement.height = viewport.height;
+    pdfCanvas.width = viewport.width;
+    pdfCanvas.height = viewport.height;
 
     const pdf = page.render({
       canvasContext: context,
@@ -193,4 +188,4 @@ async function exibePdf(pdfElement) {
   reader.readAsArrayBuffer(docSignState.pdf);
 }
 
-export { exibePdf, selectArea };
+export default exibePdf;

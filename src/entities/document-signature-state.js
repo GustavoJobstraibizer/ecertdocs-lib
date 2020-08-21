@@ -1,9 +1,9 @@
 class DocumentSignatureState {
   constructor() {
-    this.reset();
+    this.init();
   }
 
-  reset() {
+  init() {
     this.pdf = null;
     this.cropper = null;
     this.width = 0;

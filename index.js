@@ -5,7 +5,7 @@ import ControlPage from './src/components/ControlPage';
 import docSignState from './src/entities/document-signature-state';
 import Shape from './src/entities/shape';
 import EcertDocsError from './src/errors/ecert-lib';
-import { exibePdf } from './src/helpers/helper';
+import exibePdf from './src/helpers/helper';
 import {
   capitalizeFirstLetter,
   isRequired,
@@ -17,6 +17,9 @@ import structureSubscribers from './src/helpers/subscribers';
 ((window) => {
   function myPackage() {
     const ecertDocstLib = {};
+    const _packageState = {
+      modal: null,
+    };
 
     const participantsSubscriber = structureSubscribers;
 
@@ -70,17 +73,9 @@ import structureSubscribers from './src/helpers/subscribers';
 
       participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, name);
 
-      docSignState.myModal.show();
+      _packageState.modal.show();
 
       docSignState.participant = shapeState.getElementByDataKey(shape.dataKey);
-
-      // return new Promise((resolve) => {
-      //   docSignState.myModal.on('hidden', () => {
-      //     // TODO Add participant
-      //     console.log('Add Participant in list ');
-      //     resolve(participant);
-      //   });
-      // });
     };
 
     ecertDocstLib.updateParticipantSignaturePos = (
@@ -90,7 +85,7 @@ import structureSubscribers from './src/helpers/subscribers';
 
       docSignState.participant = shape;
 
-      docSignState.myModal.show();
+      _packageState.modal.show();
     };
 
     ecertDocstLib.removeParticipantSignature = (
@@ -127,9 +122,11 @@ import structureSubscribers from './src/helpers/subscribers';
     };
 
     function eraseData() {
-      docSignState.reset();
+      docSignState.init();
       shapeState.shapes = [];
-      structureSubscribers.subscribers = {};
+      structureSubscribers.init();
+      _packageState.modal.content = ControlPage();
+      // _init();
       return true;
     }
 
@@ -140,7 +137,11 @@ import structureSubscribers from './src/helpers/subscribers';
     ecertDocstLib.getParticipants = () => shapeState.shapes;
 
     function closeModalSignature() {
-      docSignState.myModal.hide();
+      const pdfElement = document.querySelector('#pdfCanvas');
+      while (pdfElement.firstChild) {
+        pdfElement.removeChild(pdfElement.lastChild);
+      }
+      _packageState.modal.hide();
 
       if (docSignState.cropper != null) {
         const dataCropper = docSignState.cropper.getData();
@@ -217,11 +218,11 @@ import structureSubscribers from './src/helpers/subscribers';
         docSignState.pdf = files;
       });
 
-      docSignState.myModal = new Modal({
+      _packageState.modal = new Modal({
         content: ControlPage(),
       });
 
-      docSignState.myModal.on('shown', () => {
+      _packageState.modal.on('shown', () => {
         function proximo() {
           if (docSignState.pagina < docSignState.totalPages) {
             docSignState.pagina += 1;
@@ -237,12 +238,11 @@ import structureSubscribers from './src/helpers/subscribers';
           pageCounter();
 
           try {
-            exibePdf(document.querySelector('#pdfCanvas'));
+            exibePdf();
           } catch (e) {
             console.error(e);
           }
         }
-
         function anterior() {
           if (docSignState.pagina > 1) {
             docSignState.pagina -= 1;
@@ -255,7 +255,7 @@ import structureSubscribers from './src/helpers/subscribers';
           }
 
           try {
-            exibePdf(document.querySelector('#pdfCanvas'));
+            exibePdf();
           } catch (e) {
             console.error(e);
           } finally {
@@ -279,7 +279,7 @@ import structureSubscribers from './src/helpers/subscribers';
 
         setCropperDataOnModalOpened();
 
-        exibePdf(document.querySelector('#pdfCanvas'));
+        exibePdf();
       });
     }
 
