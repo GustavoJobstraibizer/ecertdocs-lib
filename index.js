@@ -123,7 +123,7 @@ import structureSubscribers from './src/helpers/subscribers';
 
     function eraseData() {
       docSignState.init();
-      shapeState.shapes = [];
+      shapeState.init();
       structureSubscribers.init();
       _packageState.modal.content = ControlPage();
       // _init();

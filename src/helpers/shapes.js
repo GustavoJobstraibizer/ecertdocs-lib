@@ -1,9 +1,15 @@
-const shapeState = {
-  shapes: [],
+class ShapeState {
+  constructor() {
+    this.init();
+  }
+
+  init() {
+    this.shapes = [];
+  }
 
   getElementByDataKey(key) {
     return this.shapes.find((shape) => shape.dataKey === key);
-  },
+  }
 
   getParticipantByDocument(document) {
     const shape = this.shapes.find((sh) => sh.document === document);
@@ -13,11 +19,11 @@ const shapeState = {
     }
 
     return shape;
-  },
+  }
 
   removeParticipantFromShapes(document) {
     return this.shapes.filter((sh) => sh.document !== document);
-  },
+  }
 
   emailAlreadyExists(email) {
     const emailExists = this.shapes.some(
@@ -27,7 +33,9 @@ const shapeState = {
     if (emailExists) {
       throw new Error('E-mail ja informado');
     }
-  },
-};
+  }
+}
+
+const shapeState = new ShapeState();
 
 export default shapeState;

@@ -118,11 +118,7 @@ async function successResolverPDF() {
         ? docSignState.pagina
         : docSignState.participant.page;
 
-    try {
-      exibePdf();
-    } catch (e) {
-      // console.error(e);
-    }
+    exibePdf();
   }
 
   if (docSignState.cropper && docSignState.participant) {
@@ -147,7 +143,7 @@ async function successResolverPDF() {
 async function exibePdf() {
   const pdfCanvas = document.querySelector('#pdfCanvas');
   const context = pdfCanvas.getContext('2d');
-  // context.clearRect(0, 0, 0, 0);
+
   this.nameFile = docSignState.pdf.name;
   this.fileSize = docSignState.pdf.size;
 
