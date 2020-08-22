@@ -13,6 +13,7 @@ class DocumentSignatureState {
     this.role = null;
     this.totalPages = 0;
     this.pagina = 1;
+    this.renderInProgress = false;
   }
 }
 

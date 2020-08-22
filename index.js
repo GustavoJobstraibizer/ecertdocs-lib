@@ -19,6 +19,7 @@ import structureSubscribers from './src/helpers/subscribers';
     const ecertDocstLib = {};
     const _packageState = {
       modal: null,
+      canvas: '<canvas id="pdfCanvas" width="55%" height="55%"></canvas>',
     };
 
     const participantsSubscriber = structureSubscribers;
@@ -125,8 +126,11 @@ import structureSubscribers from './src/helpers/subscribers';
       docSignState.init();
       shapeState.init();
       structureSubscribers.init();
-      _packageState.modal.content = ControlPage();
-      // _init();
+      const canvas =
+        '<canvas id="pdfCanvas" width="55%" height="55%"></canvas>';
+      _packageState.canvas = canvas;
+      _packageState.modal = null;
+      createModal();
       return true;
     }
 
@@ -205,21 +209,9 @@ import structureSubscribers from './src/helpers/subscribers';
       document.querySelector('#numPage').value = value;
     }
 
-    function _init() {
-      const inputFile = document.querySelector('#inputFile');
-      const btnFile = document.querySelector('#btnTest');
-
-      btnFile.addEventListener('click', () => inputFile.click());
-      inputFile.addEventListener('click', (e) => {
-        e.target.value = '';
-      });
-      inputFile.addEventListener('change', (e) => {
-        const [files] = e.target.files;
-        docSignState.pdf = files;
-      });
-
+    function createModal() {
       _packageState.modal = new Modal({
-        content: ControlPage(),
+        content: ControlPage(_packageState.canvas),
       });
 
       _packageState.modal.on('shown', () => {
@@ -281,6 +273,22 @@ import structureSubscribers from './src/helpers/subscribers';
 
         exibePdf();
       });
+    }
+
+    function _init() {
+      const inputFile = document.querySelector('#inputFile');
+      const btnFile = document.querySelector('#btnTest');
+
+      btnFile.addEventListener('click', () => inputFile.click());
+      inputFile.addEventListener('click', (e) => {
+        e.target.value = '';
+      });
+      inputFile.addEventListener('change', (e) => {
+        const [files] = e.target.files;
+        docSignState.pdf = files;
+      });
+
+      createModal();
     }
 
     _init();

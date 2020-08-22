@@ -1,4 +1,4 @@
-const ControlPage = () =>
+const ControlPage = (pdfCanvas) =>
   `
   <div style="max-width: 620px;
   margin: 0 auto;
@@ -35,7 +35,7 @@ const ControlPage = () =>
     </div>
     <div class="col-xs-12 canvas-content">
       <div class="fallback-font-canvas">.</div>
-      <canvas id="pdfCanvas" width="55%" height="55%"></canvas>
+      ${pdfCanvas}
     </div>
   </div>
 `;

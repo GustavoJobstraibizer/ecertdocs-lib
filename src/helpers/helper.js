@@ -77,8 +77,6 @@ function selectArea() {
 
     dummyElement.remove();
   }
-  // const context = pdfCanvas.getContext('2d');
-  // context.clearRect(0, 0, 0, 0);
 
   const cropper = new Cropper(pdfCanvas, {
     minCanvasWidth: docSignState.width,
@@ -103,7 +101,6 @@ function selectArea() {
 }
 
 async function successResolverPDF() {
-  // docSignState.totalPage = docSignState.totalPages;
   pageCounter(docSignState);
 
   selectArea();
@@ -133,10 +130,32 @@ async function successResolverPDF() {
 
   setNumPageValue(docSignState.pagina);
   const controlPage = document.querySelector('#controlPage');
-  if (docSignState.totalPages === 1) {
-    controlPage.style.display = 'none';
-  } else {
-    controlPage.style.display = 'block';
+  controlPage.style.display = docSignState.totalPages === 1 ? 'none' : 'block';
+}
+
+// const renderPDF = {
+//   renderInProgress: false,
+// };
+
+function doRender(page, context, viewport) {
+  docSignState.renderInProgress = true;
+
+  if (docSignState.renderInProgress) {
+    const pdf = page.render({
+      canvasContext: context,
+      viewport,
+    });
+
+    pdf.promise
+      .then(async () => {
+        successResolverPDF(docSignState);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        docSignState.renderInProgress = false;
+      });
   }
 }
 
@@ -167,18 +186,9 @@ async function exibePdf() {
     pdfCanvas.width = viewport.width;
     pdfCanvas.height = viewport.height;
 
-    const pdf = page.render({
-      canvasContext: context,
-      viewport,
-    });
-
-    pdf.promise
-      .then(async () => {
-        successResolverPDF(docSignState);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
+    if (!docSignState.renderInProgress) {
+      doRender(page, context, viewport);
+    }
   };
 
   reader.readAsArrayBuffer(docSignState.pdf);
