@@ -14,6 +14,8 @@ import {
 import shapeState from './src/helpers/shapes';
 import structureSubscribers from './src/helpers/subscribers';
 
+const ENTER_CODE = 13;
+
 ((window) => {
   function myPackage() {
     const ecertDocstLib = {};
@@ -255,11 +257,26 @@ import structureSubscribers from './src/helpers/subscribers';
           }
         }
 
+        function goToPage(e) {
+          if (
+            e.keyCode === ENTER_CODE &&
+            this.value &&
+            this.value > 0 &&
+            this.value <= docSignState.totalPages
+          ) {
+            docSignState.pagina = parseInt(this.value);
+            exibePdf();
+          }
+        }
+
         const previousBtn = document.querySelector('#previousBtn');
         previousBtn.addEventListener('click', anterior);
 
         const nextBtn = document.querySelector('#nextBtn');
         nextBtn.addEventListener('click', proximo);
+
+        const numPageButton = document.querySelector('#numPage');
+        numPageButton.addEventListener('keyup', goToPage);
 
         const btnSelectAreaSignature = document.querySelector(
           '#btnSelectAreaSignature',
