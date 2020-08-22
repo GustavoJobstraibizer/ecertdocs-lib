@@ -145,7 +145,13 @@ const ENTER_CODE = 13;
       return Promise.resolve(eraseData()).then(() => Promise.resolve(true));
     };
 
-    ecertDocstLib.getParticipants = () => shapeState.shapes;
+    ecertDocstLib.getParticipants = () => {
+      const data = {};
+      data.file = docSignState.pdf;
+      data.titulo = data.file.name.replace('.pdf', '');
+      data.participants = shapeState.getParticipants();
+      return data;
+    };
 
     function closeModalSignature() {
       const pdfElement = document.querySelector('#pdfCanvas');

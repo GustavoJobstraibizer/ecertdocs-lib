@@ -34,6 +34,23 @@ class ShapeState {
       throw new Error('E-mail ja informado');
     }
   }
+
+  getParticipants() {
+    return this.shapes.map((shape) => {
+      return {
+        email: shape.text,
+        document: shape.document,
+        role: shape.role,
+        posX: parseInt(shape.x),
+        posY: parseInt(shape.y),
+        tipo: shape.tipo,
+        largura: parseInt(shape.width),
+        altura: parseInt(shape.height),
+        ordem: parseInt(shape.order),
+        pagina: parseInt(shape.page),
+      };
+    });
+  }
 }
 
 const shapeState = new ShapeState();
