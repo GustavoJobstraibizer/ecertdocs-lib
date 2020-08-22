@@ -22,6 +22,11 @@ const ENTER_CODE = 13;
     const _packageState = {
       modal: null,
       canvas: '<canvas id="pdfCanvas" width="55%" height="55%"></canvas>',
+      data: {
+        file: null,
+        titulo: '',
+        participants: [],
+      },
     };
 
     const participantsSubscriber = structureSubscribers;
@@ -146,11 +151,14 @@ const ENTER_CODE = 13;
     };
 
     ecertDocstLib.getParticipants = () => {
-      const data = {};
-      data.file = docSignState.pdf;
-      data.titulo = data.file.name.replace('.pdf', '');
-      data.participants = shapeState.getParticipants();
-      return data;
+      _packageState.data.file = docSignState.pdf;
+      _packageState.data.titulo = _packageState?.data?.file?.name.replace(
+        '.pdf',
+        '',
+      );
+      _packageState.data.participants = shapeState.getParticipants();
+      const { data } = _packageState;
+      return Object.seal(data);
     };
 
     function closeModalSignature() {

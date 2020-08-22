@@ -20,10 +20,11 @@ class Shape {
   id = this._generateId();
 
   constructor(email, document, name, role, tipoAssinatura = 1) {
-    const order = shapeState.length
-      ? Math.max(
-          ...Math,
-          shapeState.map((shape) => shape.order + 1),
+    debugger;
+    const order = shapeState.shapes.length
+      ? Math.max.apply(
+          Math,
+          shapeState.shapes.map((shape) => shape.order + 1),
         )
       : 1;
 

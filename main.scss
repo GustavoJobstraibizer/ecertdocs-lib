@@ -1,8 +1,3 @@
-@font-face {
-  font-family: Countryside-Personal-Use;
-  src: url('/src/fonts/Countryside Personal Use.ttf');
-}
-
 $colors: (
   'primary': #007bff,
   'primary-dark': #0062cc,
@@ -294,7 +289,7 @@ button.close {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  font-family: Countryside-Personal-Use;
+  font-family: 'Arial', sans-serif;
 }
 
 .subscribed {
@@ -306,5 +301,5 @@ button.close {
   bottom: 0;
   width: 100%;
   color: #000;
-  font-family: Countryside-Personal-Use;
+  font-family: 'Arial', sans-serif;
 }
