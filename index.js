@@ -27,7 +27,11 @@ const ENTER_CODE = 13;
     const participantsSubscriber = structureSubscribers;
 
     function validateInputFile(pdf) {
-      if (pdf instanceof File) {
+      if (
+        pdf instanceof File &&
+        pdf.size > 0 &&
+        pdf.type === 'application/pdf'
+      ) {
         return pdf;
       }
 
@@ -49,6 +53,7 @@ const ENTER_CODE = 13;
     ecertDocstLib.addPDFDocument = (pdfFile) => {
       return Promise.resolve(validateInputFile(pdfFile))
         .then((file) => {
+          eraseData();
           docSignState.pdf = file;
         })
         .then(() => Promise.resolve(true))
@@ -217,7 +222,7 @@ const ENTER_CODE = 13;
       });
 
       _packageState.modal.on('shown', () => {
-        function proximo() {
+        function nextPage() {
           if (docSignState.pagina < docSignState.totalPages) {
             docSignState.pagina += 1;
           }
@@ -237,7 +242,7 @@ const ENTER_CODE = 13;
             console.error(e);
           }
         }
-        function anterior() {
+        function previousPage() {
           if (docSignState.pagina > 1) {
             docSignState.pagina -= 1;
           }
@@ -256,7 +261,6 @@ const ENTER_CODE = 13;
             pageCounter();
           }
         }
-
         function goToPage(e) {
           if (
             e.keyCode === ENTER_CODE &&
@@ -270,10 +274,10 @@ const ENTER_CODE = 13;
         }
 
         const previousBtn = document.querySelector('#previousBtn');
-        previousBtn.addEventListener('click', anterior);
+        previousBtn.addEventListener('click', previousPage);
 
         const nextBtn = document.querySelector('#nextBtn');
-        nextBtn.addEventListener('click', proximo);
+        nextBtn.addEventListener('click', nextPage);
 
         const numPageButton = document.querySelector('#numPage');
         numPageButton.addEventListener('keyup', goToPage);
@@ -299,10 +303,14 @@ const ENTER_CODE = 13;
       btnFile.addEventListener('click', () => inputFile.click());
       inputFile.addEventListener('click', (e) => {
         e.target.value = '';
+        eraseData();
       });
       inputFile.addEventListener('change', (e) => {
         const [files] = e.target.files;
-        docSignState.pdf = files;
+
+        if (files.size > 0 && files.type === 'application/pdf') {
+          docSignState.pdf = files;
+        }
       });
 
       createModal();

@@ -10,11 +10,11 @@ const ControlPage = (pdfCanvas) =>
       <div class="btn-group">
         <button type="button" class="btn btn__white btn--sm" id="previousBtn">
           <i class="fa fa-long-arrow-left"></i>
-          <span class="d-sm-inline">Anterior</span>
+          <span class="d-sm-inline">&#11013;&nbsp;&nbsp;Anterior</span>
         </button>
         <button type="button" class="btn btn__white btn--sm" id="nextBtn">
           <i class="fa fa-long-arrow-right"></i>
-          <span class="d-sm-inline">Próximo</span>
+          <span class="d-sm-inline">Próximo&nbsp;&nbsp;&#10145;</span>
         </button>
         <span class="btn btn__white btn--sm">Página: </span>
         <div class="input-group" style="position: relative; display: flex;">

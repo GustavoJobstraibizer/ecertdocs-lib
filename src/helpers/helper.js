@@ -115,7 +115,7 @@ async function successResolverPDF() {
         ? docSignState.pagina
         : docSignState.participant.page;
 
-    exibePdf();
+    setTimeout(() => exibePdf(), 100);
   }
 
   if (docSignState.cropper && docSignState.participant) {
@@ -154,6 +154,7 @@ function doRender(page, context, viewport) {
         console.error(e);
       })
       .finally(() => {
+        console.log('finally');
         docSignState.renderInProgress = false;
       });
   }
@@ -163,8 +164,8 @@ async function exibePdf() {
   const pdfCanvas = document.querySelector('#pdfCanvas');
   const context = pdfCanvas.getContext('2d');
 
-  this.nameFile = docSignState.pdf.name;
-  this.fileSize = docSignState.pdf.size;
+  // this.nameFile = docSignState.pdf.name;
+  // this.fileSize = docSignState.pdf.size;
 
   const reader = new FileReader();
 
