@@ -133,10 +133,6 @@ async function successResolverPDF() {
   controlPage.style.display = docSignState.totalPages === 1 ? 'none' : 'block';
 }
 
-// const renderPDF = {
-//   renderInProgress: false,
-// };
-
 function doRender(page, context, viewport) {
   docSignState.renderInProgress = true;
 
@@ -154,7 +150,6 @@ function doRender(page, context, viewport) {
         console.error(e);
       })
       .finally(() => {
-        console.log('finally');
         docSignState.renderInProgress = false;
       });
   }
