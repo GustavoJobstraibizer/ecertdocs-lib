@@ -1,4 +1,3 @@
-// import "bootstrap";
 import Modal from 'modal-vanilla';
 import './main.scss';
 import ControlPage from './src/components/ControlPage';
@@ -63,6 +62,7 @@ const ENTER_CODE = 13;
      *
      * @param {File} pdfFile Arquivo pdf onde serão feitas as assinaturas.
      * @returns {Promise} Promise boolean caso o arquivo for válido.
+     * @method addPDFDocument
      */
     ecertDocstLib.addPDFDocument = (pdfFile) => {
       return Promise.resolve(validateInputFile(pdfFile))
@@ -77,26 +77,37 @@ const ENTER_CODE = 13;
     /**
      * Adiciona um participante a assinatura do documento.
      *
-     * @param {Participant} participant O participante que irá assinar o documento.
+     * @property {string} email Email do participante.
+     * @property {string} document CPF do participante.
+     * @property {string} name Nome do participante.
+     * @property {string} role Perfil do participante na assinatura.
+     * @property {number} tipoAssinatura Tipo da assinatura 'DIGITAL' ou 'ELETRÔNICA'.
+     * @method createParticipantSignature
      */
-    ecertDocstLib.createParticipantSignature = (participant = {}) => {
-      const data = participant;
+    ecertDocstLib.createParticipantSignature = ({
+      email,
+      document,
+      name,
+      role,
+      tipoAssinatura,
+    }) => {
+      // const data = participant;
       const shape = new Shape(
-        (data.email = isRequired('email', data.email)),
-        (data.document = isRequired('document', data.document)),
-        (data.name = isRequired('name', data.name)),
-        (data.role = isRequired('role', data.role)),
-        data.tipoAssinatura,
+        (email = isRequired('email', email)),
+        (document = isRequired('document', document)),
+        (name = isRequired('name', name)),
+        (role = isRequired('role', role)),
+        tipoAssinatura,
       );
 
-      shapeState.emailAlreadyExists(data.email);
-      if (!isValidEmail(data.email)) {
+      shapeState.emailAlreadyExists(email);
+      if (!isValidEmail(email)) {
         throw new Error('O email informado não é válido');
       }
 
       shapeState.shapes.push(shape);
 
-      const name = `${data.name} / ${capitalizeFirstLetter(data.role)}`;
+      const name = `${name} / ${capitalizeFirstLetter(role)}`;
 
       participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, name);
 
@@ -108,7 +119,8 @@ const ENTER_CODE = 13;
     /**
      * Alteração da posição da assinatura do participante.
      *
-     * @param {string} document cpf do assinante.
+     * @param {string} document cpf do participante.
+     * @method updateParticipantSignaturePos
      */
     ecertDocstLib.updateParticipantSignaturePos = (
       document = isRequired('document', document),
@@ -123,7 +135,8 @@ const ENTER_CODE = 13;
     /**
      * @description Remove o participante da assinatura do documento.
      *
-     * @param {string} document cpf do assinante.
+     * @param {string} document cpf do participante.
+     * @method removeParticipantSignature
      */
     ecertDocstLib.removeParticipantSignature = (
       document = isRequired('document', document),
@@ -170,6 +183,7 @@ const ENTER_CODE = 13;
      * selecionado para a assinatura.
      *
      * @returns {Promise} Promise boolean.
+     * @method resetData
      */
     ecertDocstLib.resetData = () => {
       return Promise.resolve(eraseData()).then(() => Promise.resolve(true));
@@ -179,6 +193,7 @@ const ENTER_CODE = 13;
      * Lista com todos os participantes configurados para assinatura do documento.
      *
      * @returns {Object} Lista de participantes configurados.
+     * @method getParticipants
      */
     ecertDocstLib.getParticipants = () => {
       _packageState.data.file = docSignState.pdf;
