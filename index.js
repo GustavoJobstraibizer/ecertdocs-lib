@@ -17,7 +17,7 @@ import structureSubscribers from './src/helpers/subscribers';
 const ENTER_CODE = 13;
 
 ((window) => {
-  function myPackage() {
+  function ecertDocsSignature() {
     const ecertDocstLib = {};
     const _packageState = {
       modal: null,
@@ -55,6 +55,13 @@ const ENTER_CODE = 13;
       throw new EcertDocsError({ message, type, errors });
     }
 
+    /**
+     * Adiciona o documento com a extensão .pdf
+     * onde serão feita as assinatuas.
+     *
+     * @param {File} pdfFile Arquivo pdf onde serão feitas as assinaturas.
+     * @returns {Promise} Promise boolean caso o arquivo for válido.
+     */
     ecertDocstLib.addPDFDocument = (pdfFile) => {
       return Promise.resolve(validateInputFile(pdfFile))
         .then((file) => {
@@ -65,6 +72,11 @@ const ENTER_CODE = 13;
         .catch(throwApplicationError);
     };
 
+    /**
+     * Adiciona um participante a assinatura do documento.
+     *
+     * @param {Participant} participant O participante que irá assinar o documento.
+     */
     ecertDocstLib.createParticipantSignature = (participant = {}) => {
       const data = participant;
       const shape = new Shape(
@@ -91,6 +103,11 @@ const ENTER_CODE = 13;
       docSignState.participant = shapeState.getElementByDataKey(shape.dataKey);
     };
 
+    /**
+     * Alteração da posição da assinatura do participante.
+     *
+     * @param {string} document cpf do assinante.
+     */
     ecertDocstLib.updateParticipantSignaturePos = (
       document = isRequired('document', document),
     ) => {
@@ -101,6 +118,11 @@ const ENTER_CODE = 13;
       _packageState.modal.show();
     };
 
+    /**
+     * Remove o participante da assinatura do documento.
+     *
+     * @param {string} document cpf do assinante.
+     */
     ecertDocstLib.removeParticipantSignature = (
       document = isRequired('document', document),
     ) => {
@@ -146,10 +168,21 @@ const ENTER_CODE = 13;
       return true;
     }
 
+    /**
+     * Permite apagar os dados dos participantes configurados e o documento
+     * selecionado para a assinatura.
+     *
+     * @returns {Promise} Promise boolean.
+     */
     ecertDocstLib.resetData = () => {
       return Promise.resolve(eraseData()).then(() => Promise.resolve(true));
     };
 
+    /**
+     * Lista com todos os participantes configurados para assinatura do documento.
+     *
+     * @returns {Object} Lista de participantes configurados.
+     */
     ecertDocstLib.getParticipants = () => {
       _packageState.data.file = docSignState.pdf;
       _packageState.data.titulo = _packageState?.data?.file?.name.replace(
@@ -311,21 +344,21 @@ const ENTER_CODE = 13;
     }
 
     function _init() {
-      const inputFile = document.querySelector('#inputFile');
-      const btnFile = document.querySelector('#btnTest');
+      // const inputFile = document.querySelector('#inputFile');
+      // const btnFile = document.querySelector('#btnTest');
 
-      btnFile.addEventListener('click', () => inputFile.click());
-      inputFile.addEventListener('click', (e) => {
-        e.target.value = '';
-        eraseData();
-      });
-      inputFile.addEventListener('change', (e) => {
-        const [files] = e.target.files;
+      // btnFile.addEventListener('click', () => inputFile.click());
+      // inputFile.addEventListener('click', (e) => {
+      //   e.target.value = '';
+      //   eraseData();
+      // });
+      // inputFile.addEventListener('change', (e) => {
+      //   const [files] = e.target.files;
 
-        if (files.size > 0 && files.type === 'application/pdf') {
-          docSignState.pdf = files;
-        }
-      });
+      //   if (files.size > 0 && files.type === 'application/pdf') {
+      //     docSignState.pdf = files;
+      //   }
+      // });
 
       createModal();
     }
@@ -337,6 +370,6 @@ const ENTER_CODE = 13;
 
   /* eslint-disable no-param-reassign */
   if (typeof window.EcertDocsLib === 'undefined') {
-    window.EcertDocsLib = myPackage();
+    window.EcertDocsLib = ecertDocsSignature();
   }
 })(window);
