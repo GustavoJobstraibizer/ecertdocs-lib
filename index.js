@@ -92,7 +92,7 @@ const ENTER_CODE = 13;
      * @property {string} role Perfil do participante na assinatura.
      * @property {number} tipoAssinatura Tipo da assinatura 1 - 'ELETRÔNICA' ou 2 - 'DIGITAL'.
      *
-     * @throws {EcertDocsError} propriedades obrigatórias
+     * @throws {Error} propriedade obrigatória
      * @method createParticipantSignature
      */
     ecertDocstLib.createParticipantSignature = ({
@@ -201,17 +201,31 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * @typedef {Participants} Participants
+     * @typedef {Participant} Participant
+     * @property {string} document - CPF do participante.
+     * @property {string} role - Perfil escolhido para o participante.
+     * @property {number} posX - posição do eixo X da assinatura.
+     * @property {number} posY - posição do eixo Y da assinatura.
+     * @property {string} tipo - Tipo assinatura Eletrônica ou digital.
+     * @property {number} largura - Medida da largura do nome / tipo na assinatura.
+     * @property {number} altura - Medida da altura do nome / tipo na assinatura.
+     * @property {number} orgem - Ordem em que sera feita a assinatura.
+     * @property {number} pagina - Pagina que sera feita a assinatura.
+     *
+     */
+
+    /**
+     * @typedef {ResultParticipant} ResultParticipant
      * @property {File} file - Arquivo selecionado para as assinaturas.
      * @property {string} titulo - Nome arquivo selecionado.
-     * @property {Object} participants - Informações dos Participantes configurados para a assinatura.
+     * @property {Participant} participants - Informações dos Participantes configurados para a assinatura.
      *
      */
 
     /**
      * @description Lista com todos os participantes configurados para assinatura do documento.
      *
-     * @returns {Participants} Lista de participantes configurados.
+     * @returns {ResultParticipant} Lista de participantes configurados.
      * @method getParticipants
      *
      */
