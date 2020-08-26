@@ -11,7 +11,7 @@ import {
   isRequired,
   isValidEmail,
 } from './src/helpers/helpers';
-import exibePdf from './src/pdf-area-select';
+import showPDF from './src/pdf-area-select';
 
 const ENTER_CODE = 13;
 
@@ -329,7 +329,7 @@ const ENTER_CODE = 13;
           pageCounter();
 
           try {
-            exibePdf();
+            showPDF();
           } catch (e) {
             console.error(e);
           }
@@ -346,7 +346,7 @@ const ENTER_CODE = 13;
           }
 
           try {
-            exibePdf();
+            showPDF();
           } catch (e) {
             console.error(e);
           } finally {
@@ -361,7 +361,7 @@ const ENTER_CODE = 13;
             this.value <= docSignState.totalPages
           ) {
             docSignState.pagina = parseInt(this.value);
-            exibePdf();
+            showPDF();
           }
         }
 
@@ -384,7 +384,7 @@ const ENTER_CODE = 13;
 
         setCropperDataOnModalOpened();
 
-        exibePdf();
+        showPDF();
       });
     }
 

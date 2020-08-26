@@ -115,7 +115,7 @@ async function successResolverPDF() {
         ? docSignState.pagina
         : docSignState.participant.page;
 
-    setTimeout(() => exibePdf(), 100);
+    setTimeout(() => showPDF(), 100);
   }
 
   if (docSignState.cropper && docSignState.participant) {
@@ -155,7 +155,7 @@ function doRender(page, context, viewport) {
   }
 }
 
-async function exibePdf() {
+async function showPDF() {
   const pdfCanvas = document.querySelector('#pdfCanvas');
   const context = pdfCanvas.getContext('2d');
 
@@ -187,4 +187,4 @@ async function exibePdf() {
   reader.readAsArrayBuffer(docSignState.pdf);
 }
 
-export default exibePdf;
+export default showPDF;
