@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "parcel index.html",
-    "build": "./start.sh"
+    "build": "./start.sh",
+    "doc": "rm -rf ./out && jsdoc index.js -c jsdoc.json"
   },
   "keywords": [],
   "author": "",

@@ -57,18 +57,19 @@ const ENTER_CODE = 13;
     }
 
     /**
-     * @typedef {EcertDocsError} EcertDocsError
+     * @typedef {Object} EcertDocsError
+     *
      * @property {string} message - Mensagem generica do erro.
      * @property {string} type - Tipo do erro validation_error.
      * @property {Object} errors - erros ocosinados ao passar parâmetros inválidos.
      */
 
     /**
-     * @description Adiciona o documento com a extensão .pdf
+     * Adiciona o documento com a extensão .pdf
      * onde serão feito as assinaturas.
      *
      * @param {File} pdfFile Arquivo pdf onde serão feitas selecionado as areas das assinaturas.
-     * @returns {Promise} Promise boolean caso o arquivo for válido.
+     * @return {Promise} Promise boolean caso o arquivo for válido.
      *
      * @method addPDFDocument
      * @throws {EcertDocsError} Erro ao setar o documento PDF para a assinatura.
@@ -84,7 +85,7 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * @description Adiciona um participante a assinatura do documento.
+     * Adiciona um participante a assinatura do documento.
      *
      * @property {string} email Email do participante.
      * @property {string} document CPF do participante.
@@ -127,7 +128,7 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * @description Permite a alteração da posição da assinatura do participante.
+     * Permite a alteração da posição da assinatura do participante.
      *
      * @param {string} document cpf do participante.
      * @method updateParticipantSignaturePos
@@ -143,7 +144,7 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * @description Remove o participante da assinatura do documento.
+     * Remove o participante da assinatura do documento.
      *
      * @param {string} document cpf do participante.
      * @method removeParticipantSignature
@@ -189,10 +190,10 @@ const ENTER_CODE = 13;
     }
 
     /**
-     * @description Permite apagar os dados dos participantes configurados e o documento
+     * Permite apagar os dados dos participantes configurados e o documento
      * selecionado para a assinatura.
      *
-     * @returns {Promise} Promise boolean.
+     * @return {Promise} Promise boolean.
      * @method resetData
      */
     ecertDocstLib.resetData = () => {
@@ -200,7 +201,21 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * @typedef {Participant} Participant
+     * Resultado das assinaturas e documento selecionado.
+     *
+     * @typedef {Object} ResultParticipant
+     *
+     * @property {File} file - Arquivo selecionado para as assinaturas.
+     * @property {string} titulo - Nome arquivo selecionado.
+     * @property {Participant} participants - Informações dos Participantes configurados para a assinatura.
+     *
+     */
+
+    /**
+     * A estrutura do Participante.
+     *
+     * @typedef {Object} Participant
+     *
      * @property {string} document - CPF do participante.
      * @property {string} role - Perfil escolhido para o participante.
      * @property {number} posX - posição do eixo X da assinatura.
@@ -214,17 +229,9 @@ const ENTER_CODE = 13;
      */
 
     /**
-     * @typedef {ResultParticipant} ResultParticipant
-     * @property {File} file - Arquivo selecionado para as assinaturas.
-     * @property {string} titulo - Nome arquivo selecionado.
-     * @property {Participant} participants - Informações dos Participantes configurados para a assinatura.
+     * Lista com todos os participantes configurados para assinatura do documento.
      *
-     */
-
-    /**
-     * @description Lista com todos os participantes configurados para assinatura do documento.
-     *
-     * @returns {ResultParticipant} Lista de participantes configurados.
+     * @return {ResultParticipant} Lista de participantes configurados.
      * @method getParticipants
      *
      */
