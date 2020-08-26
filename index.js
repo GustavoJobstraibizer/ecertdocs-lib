@@ -16,7 +16,7 @@ import showPDF from './src/pdf-area-select';
 const ENTER_CODE = 13;
 
 ((window) => {
-  'use-strict';
+  'use strict';
 
   function ecertDocsSignature() {
     const ecertDocstLib = {};
