@@ -3,6 +3,8 @@ import './main.scss';
 import ControlPage from './src/components/ControlPage';
 import docSignState from './src/entities/document-signature-state';
 import Shape from './src/entities/shape';
+import shapeState from './src/entities/shapes';
+import structureSubscribers from './src/entities/subscribers';
 import EcertDocsError from './src/errors/ecert-lib';
 import exibePdf from './src/helpers/helper';
 import {
@@ -10,14 +12,12 @@ import {
   isRequired,
   isValidEmail,
 } from './src/helpers/helpers';
-import shapeState from './src/helpers/shapes';
-import structureSubscribers from './src/helpers/subscribers';
 
 const ENTER_CODE = 13;
 
-('use-strict');
-
 ((window) => {
+  'use-strict';
+
   function ecertDocsSignature() {
     const ecertDocstLib = {};
     const _packageState = {
@@ -57,12 +57,21 @@ const ENTER_CODE = 13;
     }
 
     /**
-     * Adiciona o documento com a extensão .pdf
-     * onde serão feita as assinatuas.
+     * @typedef {EcertDocsError} EcertDocsError
+     * @property {string} message - Mensagem generica do erro.
+     * @property {string} type - Tipo do erro validation_error.
+     * @property {Object} errors - erros ocosinados ao passar parâmetros inválidos.
+     */
+
+    /**
+     * @description Adiciona o documento com a extensão .pdf
+     * onde serão feito as assinaturas.
      *
-     * @param {File} pdfFile Arquivo pdf onde serão feitas as assinaturas.
+     * @param {File} pdfFile Arquivo pdf onde serão feitas selecionado as areas das assinaturas.
      * @returns {Promise} Promise boolean caso o arquivo for válido.
+     *
      * @method addPDFDocument
+     * @throws {EcertDocsError} Erro ao setar o documento PDF para a assinatura.
      */
     ecertDocstLib.addPDFDocument = (pdfFile) => {
       return Promise.resolve(validateInputFile(pdfFile))
@@ -75,13 +84,15 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * Adiciona um participante a assinatura do documento.
+     * @description Adiciona um participante a assinatura do documento.
      *
      * @property {string} email Email do participante.
      * @property {string} document CPF do participante.
      * @property {string} name Nome do participante.
      * @property {string} role Perfil do participante na assinatura.
-     * @property {number} tipoAssinatura Tipo da assinatura 'DIGITAL' ou 'ELETRÔNICA'.
+     * @property {number} tipoAssinatura Tipo da assinatura 1 - 'ELETRÔNICA' ou 2 - 'DIGITAL'.
+     *
+     * @throws {EcertDocsError} propriedades obrigatórias
      * @method createParticipantSignature
      */
     ecertDocstLib.createParticipantSignature = ({
@@ -117,7 +128,7 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * Alteração da posição da assinatura do participante.
+     * @description Permite a alteração da posição da assinatura do participante.
      *
      * @param {string} document cpf do participante.
      * @method updateParticipantSignaturePos
@@ -179,7 +190,7 @@ const ENTER_CODE = 13;
     }
 
     /**
-     * Permite apagar os dados dos participantes configurados e o documento
+     * @description Permite apagar os dados dos participantes configurados e o documento
      * selecionado para a assinatura.
      *
      * @returns {Promise} Promise boolean.
@@ -190,10 +201,19 @@ const ENTER_CODE = 13;
     };
 
     /**
-     * Lista com todos os participantes configurados para assinatura do documento.
+     * @typedef {Participants} Participants
+     * @property {File} file - Arquivo selecionado para as assinaturas.
+     * @property {string} titulo - Nome arquivo selecionado.
+     * @property {Object} participants - Informações dos Participantes configurados para a assinatura.
      *
-     * @returns {Object} Lista de participantes configurados.
+     */
+
+    /**
+     * @description Lista com todos os participantes configurados para assinatura do documento.
+     *
+     * @returns {Participants} Lista de participantes configurados.
      * @method getParticipants
+     *
      */
     ecertDocstLib.getParticipants = () => {
       _packageState.data.file = docSignState.pdf;

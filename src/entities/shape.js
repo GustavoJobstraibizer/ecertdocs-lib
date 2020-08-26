@@ -1,5 +1,5 @@
 /* eslint class-methods-use-this: ["error", { "exceptMethods": ["_generateId"] }] */
-import shapeState from '../helpers/shapes';
+import shapeState from './shapes';
 
 class Shape {
   x = 0;

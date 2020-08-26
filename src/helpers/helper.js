@@ -4,8 +4,8 @@ import 'cropperjs/dist/cropper.min.css';
 import * as pdfjsLib from 'pdfjs-dist';
 import '../../worker';
 import docSignState from '../entities/document-signature-state';
+import structureSubscribers from '../entities/subscribers';
 import roleParticipant from './roles';
-import structureSubscribers from './subscribers';
 
 function createElementToShowSubscriber() {
   if (Object.entries(docSignState.participant).length > 0) {
@@ -158,9 +158,6 @@ function doRender(page, context, viewport) {
 async function exibePdf() {
   const pdfCanvas = document.querySelector('#pdfCanvas');
   const context = pdfCanvas.getContext('2d');
-
-  // this.nameFile = docSignState.pdf.name;
-  // this.fileSize = docSignState.pdf.size;
 
   const reader = new FileReader();
 
