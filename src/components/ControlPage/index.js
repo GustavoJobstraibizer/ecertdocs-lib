@@ -2,7 +2,7 @@ const ControlPage = (pdfCanvas) =>
   `
   <div style="max-width: 620px;
   margin: 0 auto;
-}">
+">
     <div class="content-header-modal-document">
       <button type="button" class="btn btn__primary" id="btnSelectAreaSignature">Selecionar área</button>
     </div>

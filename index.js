@@ -102,7 +102,6 @@ const ENTER_CODE = 13;
       role,
       tipoAssinatura,
     }) => {
-      // const data = participant;
       const shape = new Shape(
         (email = isRequired('email', email)),
         (document = isRequired('document', document)),
@@ -390,22 +389,6 @@ const ENTER_CODE = 13;
     }
 
     function _init() {
-      // const inputFile = document.querySelector('#inputFile');
-      // const btnFile = document.querySelector('#btnTest');
-
-      // btnFile.addEventListener('click', () => inputFile.click());
-      // inputFile.addEventListener('click', (e) => {
-      //   e.target.value = '';
-      //   eraseData();
-      // });
-      // inputFile.addEventListener('change', (e) => {
-      //   const [files] = e.target.files;
-
-      //   if (files.size > 0 && files.type === 'application/pdf') {
-      //     docSignState.pdf = files;
-      //   }
-      // });
-
       createModal();
     }
 
