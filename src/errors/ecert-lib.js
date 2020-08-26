@@ -1,12 +1,3 @@
-/**
- * Class EcertDocsError class
- *
- *
- * @returns @property {string} message a message error
- * @class
- * @classdesc Class EcertDocsError class
- *
- */
 class EcertDocsError extends Error {
   constructor({ message, type, errors } = {}) {
     super();
