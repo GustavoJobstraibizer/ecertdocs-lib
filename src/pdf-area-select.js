@@ -2,10 +2,10 @@
 import Cropper from 'cropperjs';
 import 'cropperjs/dist/cropper.min.css';
 import * as pdfjsLib from 'pdfjs-dist';
-import '../../worker';
-import docSignState from '../entities/document-signature-state';
-import structureSubscribers from '../entities/subscribers';
-import roleParticipant from './roles';
+import '../worker';
+import docSignState from './entities/document-signature-state';
+import structureSubscribers from './entities/subscribers';
+import roleParticipant from './helpers/roles';
 
 function createElementToShowSubscriber() {
   if (Object.entries(docSignState.participant).length > 0) {

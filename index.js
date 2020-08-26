@@ -6,12 +6,12 @@ import Shape from './src/entities/shape';
 import shapeState from './src/entities/shapes';
 import structureSubscribers from './src/entities/subscribers';
 import EcertDocsError from './src/errors/ecert-lib';
-import exibePdf from './src/helpers/helper';
 import {
   capitalizeFirstLetter,
   isRequired,
   isValidEmail,
 } from './src/helpers/helpers';
+import exibePdf from './src/pdf-area-select';
 
 const ENTER_CODE = 13;
 
@@ -118,9 +118,9 @@ const ENTER_CODE = 13;
 
       shapeState.shapes.push(shape);
 
-      const name = `${name} / ${capitalizeFirstLetter(role)}`;
+      const nameCapitalized = `${name} / ${capitalizeFirstLetter(role)}`;
 
-      participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, name);
+      participantsSubscriber.addSubscriber(shape.id, 0, 0, 1, nameCapitalized);
 
       _packageState.modal.show();
 
